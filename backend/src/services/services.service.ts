@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
+import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 
 export interface CreateServiceDto  {
   
@@ -247,10 +247,66 @@ async getAllDailyEarnings() {
   return result;
 }
     
+async getMonthlyEarnings() {
+
+  const now = new Date;
+
+ const year = now.getFullYear();
+ const month = now.getMonth();
+
+ let startDate = new Date(year, month, 1);
+ let endDate = new Date(year, month + 1, 0, 23, 59, 59);
+
+ 
+
+const service = await this.prisma.service.findMany({
+  where: {
+    createdAt: {
+      gte: startDate,
+      lte: endDate
+    }
+  },include: {
+    barber: {
+      select: {
+        name: true
+      }
+    }
+  }
+});
+
+
+const grouped: any = {};
+
+  service.forEach(service => {
+    if (!grouped[service.barberId]) {
+      grouped[service.barberId] = [];
+    }
+    grouped[service.barberId].push(service);
+
     
-    
-    
-    
-    
+  });
+
+  if(service.length ===0 ) return [];
+
+  const result: any[] = [];
+
+  for (const barberId in grouped) {
+    const barberServices = grouped[barberId]; 
+    const earnings = this.calculateDailyEarnings(barberServices);
+    const barberName = barberServices[0]?.barber?.name || "Sin nombre";
+
+    result.push({
+      barberId,
+      barberName,
+      ...earnings
+    });
+
+  }
+
+  return result;
 }
+    
+}    
+    
+
 

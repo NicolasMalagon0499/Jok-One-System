@@ -31,5 +31,8 @@ export class ServicesController {
         return this.servicesService.getBiweeklyEarnings();
     }
 
-    
+    @Get('monthly')
+    async getMonthlyEarnings() {
+        return this.servicesService.getMonthlyEarnings();
+    }
 }
