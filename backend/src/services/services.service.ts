@@ -6,6 +6,7 @@ export interface CreateServiceDto  {
   
   price: number;
   tip: number;
+  product: number;
   barberId: string;
   
 }
@@ -23,6 +24,7 @@ async createService(data: CreateServiceDto) {
     data:{
         price: data.price,
         tip: data.tip,
+        product: data.product,
         barberId: data.barberId
 
     }
@@ -34,17 +36,21 @@ calculateDailyEarnings(services: any[]) {
 
     let totalServices = 0;
     let totalTips = 0;
+    let totalProducts = 0;
 
 
     services.forEach(service => {
         totalServices += service.price;
         totalTips += service.tip;
+        totalProducts += service.product;
+
 
     });
 
     const barberShare= totalServices * 0.5; 
     const businessShare= totalServices * 0.5;
-    const barberTotal= barberShare + totalTips;
+    const productShare = totalProducts * 0.15;
+    const barberTotal= barberShare + totalTips + productShare;
 
     let compensation = 0;
 
@@ -55,7 +61,8 @@ calculateDailyEarnings(services: any[]) {
     }
     return {
         totalServices,
-        totalTips,  
+        totalTips,
+        totalProducts,  
         barberShare,
         businessShare,
         barberTotal,

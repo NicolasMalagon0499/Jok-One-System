@@ -106,6 +106,7 @@ exports.Prisma.ServiceScalarFieldEnum = {
   id: 'id',
   price: 'price',
   tip: 'tip',
+  product: 'product',
   createdAt: 'createdAt',
   barberId: 'barberId'
 };
@@ -167,7 +168,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -176,13 +176,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  password  String\n  role      Role\n  createdAt DateTime @default(now())\n\n  services Service[]\n}\n\nmodel Service {\n  id        String   @id @default(uuid())\n  price     Float\n  tip       Float\n  createdAt DateTime @default(now())\n\n  barberId String\n  barber   User   @relation(fields: [barberId], references: [id])\n}\n\nenum Role {\n  ADMIN\n  BARBER\n}\n",
-  "inlineSchemaHash": "58358cf2eeb19357eb89bc2efdda4998971d95df591fde61ccbce1652cc35291",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  password  String\n  role      Role\n  createdAt DateTime @default(now())\n\n  services Service[]\n}\n\nmodel Service {\n  id        String   @id @default(uuid())\n  price     Float\n  tip       Float\n  product   Float\n  createdAt DateTime @default(now())\n\n  barberId String\n  barber   User   @relation(fields: [barberId], references: [id])\n}\n\nenum Role {\n  ADMIN\n  BARBER\n}\n",
+  "inlineSchemaHash": "d677b9677126b6c6bd3cda34038209d33ebe42741f374ecae7bff4008046f851",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"services\",\"kind\":\"object\",\"type\":\"Service\",\"relationName\":\"ServiceToUser\"}],\"dbName\":null},\"Service\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"tip\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"barberId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"barber\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ServiceToUser\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"services\",\"kind\":\"object\",\"type\":\"Service\",\"relationName\":\"ServiceToUser\"}],\"dbName\":null},\"Service\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"tip\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"product\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"barberId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"barber\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ServiceToUser\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

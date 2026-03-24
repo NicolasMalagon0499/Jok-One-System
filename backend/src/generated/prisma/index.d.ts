@@ -2097,17 +2097,20 @@ export namespace Prisma {
   export type ServiceAvgAggregateOutputType = {
     price: number | null
     tip: number | null
+    product: number | null
   }
 
   export type ServiceSumAggregateOutputType = {
     price: number | null
     tip: number | null
+    product: number | null
   }
 
   export type ServiceMinAggregateOutputType = {
     id: string | null
     price: number | null
     tip: number | null
+    product: number | null
     createdAt: Date | null
     barberId: string | null
   }
@@ -2116,6 +2119,7 @@ export namespace Prisma {
     id: string | null
     price: number | null
     tip: number | null
+    product: number | null
     createdAt: Date | null
     barberId: string | null
   }
@@ -2124,6 +2128,7 @@ export namespace Prisma {
     id: number
     price: number
     tip: number
+    product: number
     createdAt: number
     barberId: number
     _all: number
@@ -2133,17 +2138,20 @@ export namespace Prisma {
   export type ServiceAvgAggregateInputType = {
     price?: true
     tip?: true
+    product?: true
   }
 
   export type ServiceSumAggregateInputType = {
     price?: true
     tip?: true
+    product?: true
   }
 
   export type ServiceMinAggregateInputType = {
     id?: true
     price?: true
     tip?: true
+    product?: true
     createdAt?: true
     barberId?: true
   }
@@ -2152,6 +2160,7 @@ export namespace Prisma {
     id?: true
     price?: true
     tip?: true
+    product?: true
     createdAt?: true
     barberId?: true
   }
@@ -2160,6 +2169,7 @@ export namespace Prisma {
     id?: true
     price?: true
     tip?: true
+    product?: true
     createdAt?: true
     barberId?: true
     _all?: true
@@ -2255,6 +2265,7 @@ export namespace Prisma {
     id: string
     price: number
     tip: number
+    product: number
     createdAt: Date
     barberId: string
     _count: ServiceCountAggregateOutputType | null
@@ -2282,6 +2293,7 @@ export namespace Prisma {
     id?: boolean
     price?: boolean
     tip?: boolean
+    product?: boolean
     createdAt?: boolean
     barberId?: boolean
     barber?: boolean | UserDefaultArgs<ExtArgs>
@@ -2291,6 +2303,7 @@ export namespace Prisma {
     id?: boolean
     price?: boolean
     tip?: boolean
+    product?: boolean
     createdAt?: boolean
     barberId?: boolean
     barber?: boolean | UserDefaultArgs<ExtArgs>
@@ -2300,6 +2313,7 @@ export namespace Prisma {
     id?: boolean
     price?: boolean
     tip?: boolean
+    product?: boolean
     createdAt?: boolean
     barberId?: boolean
     barber?: boolean | UserDefaultArgs<ExtArgs>
@@ -2309,11 +2323,12 @@ export namespace Prisma {
     id?: boolean
     price?: boolean
     tip?: boolean
+    product?: boolean
     createdAt?: boolean
     barberId?: boolean
   }
 
-  export type ServiceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "price" | "tip" | "createdAt" | "barberId", ExtArgs["result"]["service"]>
+  export type ServiceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "price" | "tip" | "product" | "createdAt" | "barberId", ExtArgs["result"]["service"]>
   export type ServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     barber?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2333,6 +2348,7 @@ export namespace Prisma {
       id: string
       price: number
       tip: number
+      product: number
       createdAt: Date
       barberId: string
     }, ExtArgs["result"]["service"]>
@@ -2762,6 +2778,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Service", 'String'>
     readonly price: FieldRef<"Service", 'Float'>
     readonly tip: FieldRef<"Service", 'Float'>
+    readonly product: FieldRef<"Service", 'Float'>
     readonly createdAt: FieldRef<"Service", 'DateTime'>
     readonly barberId: FieldRef<"Service", 'String'>
   }
@@ -3208,6 +3225,7 @@ export namespace Prisma {
     id: 'id',
     price: 'price',
     tip: 'tip',
+    product: 'product',
     createdAt: 'createdAt',
     barberId: 'barberId'
   };
@@ -3376,6 +3394,7 @@ export namespace Prisma {
     id?: StringFilter<"Service"> | string
     price?: FloatFilter<"Service"> | number
     tip?: FloatFilter<"Service"> | number
+    product?: FloatFilter<"Service"> | number
     createdAt?: DateTimeFilter<"Service"> | Date | string
     barberId?: StringFilter<"Service"> | string
     barber?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -3385,6 +3404,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     tip?: SortOrder
+    product?: SortOrder
     createdAt?: SortOrder
     barberId?: SortOrder
     barber?: UserOrderByWithRelationInput
@@ -3397,6 +3417,7 @@ export namespace Prisma {
     NOT?: ServiceWhereInput | ServiceWhereInput[]
     price?: FloatFilter<"Service"> | number
     tip?: FloatFilter<"Service"> | number
+    product?: FloatFilter<"Service"> | number
     createdAt?: DateTimeFilter<"Service"> | Date | string
     barberId?: StringFilter<"Service"> | string
     barber?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -3406,6 +3427,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     tip?: SortOrder
+    product?: SortOrder
     createdAt?: SortOrder
     barberId?: SortOrder
     _count?: ServiceCountOrderByAggregateInput
@@ -3422,6 +3444,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Service"> | string
     price?: FloatWithAggregatesFilter<"Service"> | number
     tip?: FloatWithAggregatesFilter<"Service"> | number
+    product?: FloatWithAggregatesFilter<"Service"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Service"> | Date | string
     barberId?: StringWithAggregatesFilter<"Service"> | string
   }
@@ -3497,6 +3520,7 @@ export namespace Prisma {
     id?: string
     price: number
     tip: number
+    product: number
     createdAt?: Date | string
     barber: UserCreateNestedOneWithoutServicesInput
   }
@@ -3505,6 +3529,7 @@ export namespace Prisma {
     id?: string
     price: number
     tip: number
+    product: number
     createdAt?: Date | string
     barberId: string
   }
@@ -3513,6 +3538,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     tip?: FloatFieldUpdateOperationsInput | number
+    product?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barber?: UserUpdateOneRequiredWithoutServicesNestedInput
   }
@@ -3521,6 +3547,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     tip?: FloatFieldUpdateOperationsInput | number
+    product?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barberId?: StringFieldUpdateOperationsInput | string
   }
@@ -3529,6 +3556,7 @@ export namespace Prisma {
     id?: string
     price: number
     tip: number
+    product: number
     createdAt?: Date | string
     barberId: string
   }
@@ -3537,6 +3565,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     tip?: FloatFieldUpdateOperationsInput | number
+    product?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -3544,6 +3573,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     tip?: FloatFieldUpdateOperationsInput | number
+    product?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barberId?: StringFieldUpdateOperationsInput | string
   }
@@ -3680,6 +3710,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     tip?: SortOrder
+    product?: SortOrder
     createdAt?: SortOrder
     barberId?: SortOrder
   }
@@ -3687,12 +3718,14 @@ export namespace Prisma {
   export type ServiceAvgOrderByAggregateInput = {
     price?: SortOrder
     tip?: SortOrder
+    product?: SortOrder
   }
 
   export type ServiceMaxOrderByAggregateInput = {
     id?: SortOrder
     price?: SortOrder
     tip?: SortOrder
+    product?: SortOrder
     createdAt?: SortOrder
     barberId?: SortOrder
   }
@@ -3701,6 +3734,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     tip?: SortOrder
+    product?: SortOrder
     createdAt?: SortOrder
     barberId?: SortOrder
   }
@@ -3708,6 +3742,7 @@ export namespace Prisma {
   export type ServiceSumOrderByAggregateInput = {
     price?: SortOrder
     tip?: SortOrder
+    product?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -3917,6 +3952,7 @@ export namespace Prisma {
     id?: string
     price: number
     tip: number
+    product: number
     createdAt?: Date | string
   }
 
@@ -3924,6 +3960,7 @@ export namespace Prisma {
     id?: string
     price: number
     tip: number
+    product: number
     createdAt?: Date | string
   }
 
@@ -3960,6 +3997,7 @@ export namespace Prisma {
     id?: StringFilter<"Service"> | string
     price?: FloatFilter<"Service"> | number
     tip?: FloatFilter<"Service"> | number
+    product?: FloatFilter<"Service"> | number
     createdAt?: DateTimeFilter<"Service"> | Date | string
     barberId?: StringFilter<"Service"> | string
   }
@@ -4020,6 +4058,7 @@ export namespace Prisma {
     id?: string
     price: number
     tip: number
+    product: number
     createdAt?: Date | string
   }
 
@@ -4027,6 +4066,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     tip?: FloatFieldUpdateOperationsInput | number
+    product?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4034,6 +4074,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     tip?: FloatFieldUpdateOperationsInput | number
+    product?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4041,6 +4082,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     tip?: FloatFieldUpdateOperationsInput | number
+    product?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

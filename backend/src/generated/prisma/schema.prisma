@@ -23,6 +23,7 @@ model Service {
   id        String   @id @default(uuid())
   price     Float
   tip       Float
+  product   Float
   createdAt DateTime @default(now())
 
   barberId String
