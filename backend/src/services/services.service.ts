@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addMinutes } from 'date-fns';
 
 export interface CreateServiceDto  {
   
@@ -32,7 +32,7 @@ async createService(data: CreateServiceDto) {
 
 }
 
-calculateDailyEarnings(services: any[]) {
+calculateEarnings(services: any[], isAdmin: boolean = false) {
 
     let totalServices = 0;
     let totalTips = 0;
@@ -48,7 +48,7 @@ calculateDailyEarnings(services: any[]) {
     });
 
     const barberShare= totalServices * 0.5; 
-    const businessShare= totalServices * 0.5;
+    const businessShare= (totalServices * 0.5) + (totalProducts * 0.85);
     const productShare = totalProducts * 0.15;
     const barberTotal= barberShare + totalTips + productShare;
 
@@ -56,10 +56,11 @@ calculateDailyEarnings(services: any[]) {
 
     if (barberTotal <30.000){
 
-        compensation = 30.000 - barberTotal;
+      compensation = parseFloat((30 - barberTotal).toFixed(1));
 
     }
-    return {
+    if(isAdmin){
+      return {
         totalServices,
         totalTips,
         totalProducts,  
@@ -67,8 +68,24 @@ calculateDailyEarnings(services: any[]) {
         businessShare,
         barberTotal,
         compensation
-    };
+    }
+
+    }
+
+    return{
+      totalServices,
+      totalTips,
+      totalProducts,
+      barberTotal,
+      compensation
+
+
+    }
+    
 }
+
+
+
 async getDailyEarnings(barberId: string) {
   
   const todayStart = startOfDay(new Date());
@@ -84,7 +101,7 @@ async getDailyEarnings(barberId: string) {
     }
   });
 
-  return this.calculateDailyEarnings(services);
+  return this.calculateEarnings(services);
 }
 
 
@@ -107,7 +124,7 @@ async getAllDailyEarnings() {
             barber: true
         }
         });
-        const grouped ={};
+        const grouped: any = {};
 
         services.forEach(service => {
             if (!grouped[service.barberId]) {
@@ -116,37 +133,48 @@ async getAllDailyEarnings() {
             grouped[service.barberId].push(service);
         });
 
-        const results: any [] = [];
+        const result: any [] = [];
 
         for (const barberId in grouped) {
         const barberServices = grouped[barberId];
 
-            const earnings = this.calculateDailyEarnings(barberServices);
-
+            const earnings = this.calculateEarnings(barberServices, true);
             const barberName = barberServices[0].barber.name;
 
-            results.push({
+            result.push({
                 barberId,
                 barberName,
                 ...earnings
             });
-            }
-        return results;
+            
+
+    }    
+
+  const totalBusinessShare = result.reduce((sum, b) => sum + b.businessShare, 0);
+  const totalCompensations = result.reduce((sum, b) => sum + b.compensation, 0);
+
+  const businessSummary = {
+    
+    totalBusinessShare,
+    totalCompensations,
+    netBusiness: totalBusinessShare - totalCompensations
+  
+  }
+
+  return { barbers: result, businessSummary };
 
 
-    }     
-
-
+}
     
     
-    
-    async getWeeklyEarnings() {
+ async getWeeklyEarnings(barberId?: string) {
 
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 }); // lunes
   const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
 
   const services = await this.prisma.service.findMany({
     where: {
+        ...(barberId && { barberId: barberId }),
       createdAt: {
         gte: weekStart,
         lte: weekEnd
@@ -159,9 +187,9 @@ async getAllDailyEarnings() {
         }
       }
     }
-  });
+});
 
-  const grouped: any = {};
+  const grouped: any  = {};
 
   services.forEach(service => {
     if (!grouped[service.barberId]) {
@@ -175,7 +203,7 @@ async getAllDailyEarnings() {
   for (const barberId in grouped) {
     const barberServices = grouped[barberId];
 
-    const earnings = this.calculateDailyEarnings(barberServices);
+    const earnings = this.calculateEarnings(barberServices, true);
 
     const barberName = barberServices[0].barber.name;
 
@@ -185,13 +213,27 @@ async getAllDailyEarnings() {
       ...earnings
     });
   }
+  const totalBusinessShare = result.reduce((sum, b) => sum + b.businessShare, 0);
+  const totalCompensations = result.reduce((sum, b) => sum + b.compensation, 0);
 
-  return result;
+  const businessSummary = {
+    
+    totalBusinessShare,
+    totalCompensations,
+    netBusiness: totalBusinessShare - totalCompensations
+  
+  }
+
+  return { barbers: result, businessSummary };
+
+
+  //return result;
 }
+
     
 //funcion para calcular las ganancias quincenales, se divide el mes en dos periodos: del 1 al 15 y del 16 al final del mes. Se obtiene la fecha actual y se determina a qué periodo pertenece. Luego, se consulta la base de datos para obtener los servicios realizados en ese periodo y se agrupan por barbero para calcular las ganancias totales, la parte del barbero, la parte del negocio y la compensación si es necesario.
 
- async getBiweeklyEarnings() {
+ async getBiweeklyEarnings(barberId?: string) {
 
   const now = new Date();
 
@@ -212,6 +254,7 @@ async getAllDailyEarnings() {
 
   const services = await this.prisma.service.findMany({
     where: {
+      ...(barberId && { barberId: barberId }),
       createdAt: {
         gte: startDate,
         lte: endDate
@@ -240,7 +283,7 @@ async getAllDailyEarnings() {
   for (const barberId in grouped) {
     const barberServices = grouped[barberId];
 
-    const earnings = this.calculateDailyEarnings(barberServices);
+    const earnings = this.calculateEarnings(barberServices, true);
 
     const barberName = barberServices[0].barber.name;
 
@@ -250,11 +293,23 @@ async getAllDailyEarnings() {
       ...earnings
     });
   }
+  const totalBusinessShare = result.reduce((sum, b) => sum + b.businessShare, 0);
+  const totalCompensations = result.reduce((sum, b) => sum + b.compensation, 0);
 
-  return result;
+  const businessSummary = {
+    
+    totalBusinessShare,
+    totalCompensations,
+    netBusiness: totalBusinessShare - totalCompensations
+  
+  }
+
+  return { barbers: result, businessSummary };
+
+  //return result;
 }
     
-async getMonthlyEarnings() {
+async getMonthlyEarnings(barberId?: string) {
 
   const now = new Date;
 
@@ -268,6 +323,7 @@ async getMonthlyEarnings() {
 
 const service = await this.prisma.service.findMany({
   where: {
+    ...(barberId && { barberId: barberId }),
     createdAt: {
       gte: startDate,
       lte: endDate
@@ -299,7 +355,7 @@ const grouped: any = {};
 
   for (const barberId in grouped) {
     const barberServices = grouped[barberId]; 
-    const earnings = this.calculateDailyEarnings(barberServices);
+    const earnings = this.calculateEarnings(barberServices, true);
     const barberName = barberServices[0]?.barber?.name || "Sin nombre";
 
     result.push({
@@ -309,8 +365,20 @@ const grouped: any = {};
     });
 
   }
+  const totalBusinessShare = result.reduce((sum, b) => sum + b.businessShare, 0);
+  const totalCompensations = result.reduce((sum, b) => sum + b.compensation, 0);
 
-  return result;
+  const businessSummary = {
+    
+    totalBusinessShare,
+    totalCompensations,
+    netBusiness: totalBusinessShare - totalCompensations
+  
+  }
+
+  return { barbers: result, businessSummary };
+
+  //return result;
 }
     
 }    

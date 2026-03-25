@@ -26,13 +26,29 @@ export class ServicesController {
         return this.servicesService.getWeeklyEarnings();
     }
 
+    @Get('weekly/:barberId')
+    async getWeeklyEarningsByBarber(@Param('barberId') barberId: string) {
+        return this.servicesService.getWeeklyEarnings(barberId);
+    }
+
+
     @Get('biweekly')
     getBiweekly() {
         return this.servicesService.getBiweeklyEarnings();
     }
 
+    @Get('biweekly/:barberId')
+    getBiweeklyByBarber(@Param('barberId') barberId: string) {
+        return this.servicesService.getBiweeklyEarnings(barberId);
+    }
+
     @Get('monthly')
     async getMonthlyEarnings() {
         return this.servicesService.getMonthlyEarnings();
+    }
+
+    @Get('monthly/:barberId')
+    async getMonthlyEarningsByBarber(@Param('barberId') barberId: string) {
+        return this.servicesService.getMonthlyEarnings(barberId);
     }
 }
