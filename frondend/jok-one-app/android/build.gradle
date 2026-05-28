@@ -1,0 +1,60 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:8.2.1'
+    classpath 'com.google.gms:google-services:4.4.0'
+
+    // NOTE: Do not place your application dependencies here; they belong
+    // in the individual module build.gradle files
+  }
+}
+
+apply from: "variables.gradle"
+
+allprojects {
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}
+
+// 1. Forzamos a que todos los subproyectos independientes (como capacitor-status-bar) usen la API 35
+subprojects {
+  afterEvaluate { project ->
+    if (project.hasProperty("android")) {
+      android {
+        compileSdkVersion 35
+        defaultConfig {
+          targetSdkVersion 35
+        }
+      }
+    }
+  }
+}
+
+// 2. Actualizamos las variables globales de Capacitor a la API 35 para Android 15
+ext {
+  minSdkVersion = 22
+  compileSdkVersion = 35 //  Actualizado
+  targetSdkVersion = 35  //  Actualizado
+  androidxActivityVersion = '1.8.0'
+  androidxAppCompatVersion = '1.6.1'
+  androidxCoordinatorLayoutVersion = '1.2.0'
+  androidxCoreVersion = '1.12.0'
+  androidxFragmentVersion = '1.6.2'
+  coreSplashScreenVersion = '1.0.1'
+  androidxWebkitVersion = '1.9.0'
+  junitVersion = '4.13.2'
+  androidxJunitVersion = '1.1.5'
+  androidxEspressoCoreVersion = '3.5.1'
+  cordovaAndroidVersion = '10.1.1'
+}

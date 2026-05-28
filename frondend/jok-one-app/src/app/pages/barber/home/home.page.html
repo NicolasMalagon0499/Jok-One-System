@@ -1,0 +1,150 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Hola, {{ user?.name }}</ion-title>
+    <ion-button slot="end" (click)="logout()" fill="clear">Salir</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-item>
+    <ion-label>Período</ion-label>
+    <ion-select [(ngModel)]="period" (ionChange)="onPeriodChange()">
+      <ion-select-option value="daily">📅 Hoy</ion-select-option>
+      <ion-select-option value="weekly">📆 Semana</ion-select-option>
+      <ion-select-option value="biweekly">🗓️ Quincena</ion-select-option>
+      <ion-select-option value="monthly">📅 Mes</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Mis ganancias</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>✂️ Servicios: {{ earnings.totalServices | number:'1.2-2' }}</p>
+      <p>💵 Propinas: {{ earnings.totalTips | number:'1.2-2' }}</p>
+      <p>🧴 Productos: {{ earnings.totalProducts | number:'1.2-2' }}</p>
+      <p>💰 Total: {{ earnings.barberTotal | number:'1.2-2' }}</p>
+      <p>🔄 Compensación: {{ earnings.compensation | number:'1.2-2' }}</p>
+      <p>💵 Efectivo: {{ earnings.totalCash | number:'1.2-2' }}</p>
+      <p>📱 QR: {{ earnings.totalQr | number:'1.2-2' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <h3>Registrar Servicio</h3>
+
+  <ion-item>
+    <ion-label>Cliente</ion-label>
+    <ion-select [(ngModel)]="service.clientType">
+      <ion-select-option value="NEW">🆕 Cliente nuevo</ion-select-option>
+      <ion-select-option value="RETURNING">👤 Cliente antiguo</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Precio del servicio</ion-label>
+    <ion-input type="number" [(ngModel)]="service.price"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Propina</ion-label>
+    <ion-input type="number" [(ngModel)]="service.tip"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Método de pago</ion-label>
+    <ion-select [(ngModel)]="paymentMethod" (ionChange)="onPaymentMethodChange()">
+      <ion-select-option value="CASH">💵 Efectivo</ion-select-option>
+      <ion-select-option value="QR">📱 QR</ion-select-option>
+      <ion-select-option value="HYBRID">💳 Híbrido</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ng-container *ngIf="paymentMethod === 'HYBRID'">
+    <ion-item>
+      <ion-label position="floating">Efectivo</ion-label>
+      <ion-input type="number" [(ngModel)]="service.cashAmount"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">QR</ion-label>
+      <ion-input type="number" [(ngModel)]="service.qrAmount"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Nota del evento</ion-label>
+      <ion-input type="text" [(ngModel)]="service.specialEvent"></ion-input>
+    </ion-item>
+  </ng-container>
+
+  <h4>Agregar producto</h4>
+
+  <ion-item>
+    <ion-label>Producto</ion-label>
+    <ion-select [(ngModel)]="selectedProduct.productId" placeholder="Seleccionar">
+      <ion-select-option *ngFor="let p of products" [value]="p.id">
+        {{ p.name }} (Stock: {{ p.stock }})
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Cantidad</ion-label>
+    <ion-input type="number" [(ngModel)]="selectedProduct.quantity"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Tipo</ion-label>
+    <ion-select [(ngModel)]="selectedProduct.type">
+      <ion-select-option value="SOLD">💰 Vendido</ion-select-option>
+      <ion-select-option value="USED">🔧 Usado</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-button expand="block" (click)="addProduct()" fill="outline">+ Agregar producto</ion-button>
+
+  <ion-card *ngIf="service.products.length > 0">
+    <ion-card-content>
+      <div *ngFor="let p of service.products; let i = index">
+        {{ getProductName(p.productId) }} x{{ p.quantity }} ({{ p.type }})
+        <ion-button fill="clear" color="danger" (click)="removeProduct(i)">✕</ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" (click)="createService()" color="primary" style="margin-top: 20px">
+    Registrar Servicio
+  </ion-button>
+
+  <h3>Mis servicios</h3>
+
+  <ion-item>
+    <ion-label position="floating">Filtrar por fecha</ion-label>
+    <ion-input type="date" [(ngModel)]="selectedDate" (ionChange)="onDateChange()"></ion-input>
+  </ion-item>
+
+  <ion-card *ngIf="earningsByDate">
+  <ion-card-header>
+    <ion-card-title>Resumen {{ selectedDate }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <p>✂️ Servicios: {{ earningsByDate.totalServices | number:'1.2-2' }}</p>
+    <p>💵 Propinas: {{ earningsByDate.totalTips | number:'1.2-2' }}</p>
+    <p>🧴 Productos: {{ earnings.totalProducts | number:'1.2-2' }}</p>
+    <p>🔄 Compensación: {{ earnings.compensation | number:'1.2-2' }}</p>
+    <p>💰 Total: {{ earnings.barberTotal | number:'1.2-2' }}</p>
+    
+  </ion-card-content>
+</ion-card>
+
+  <ion-card *ngFor="let s of history">
+    <ion-card-content>
+      <p>✂️ Precio: {{ s.price }}</p>
+      <p>💵 Propina: {{ s.tip }}</p>
+      <p>👤 Cliente: {{ s.clientType === 'NEW' ? '🆕 Nuevo' : '👤 Antiguo' }}</p>
+      <p>💳 Efectivo: {{ s.cashAmount }} | QR: {{ s.qrAmount }}</p>
+      <p *ngIf="s.specialEvent">🎉 {{ s.specialEvent }}</p>
+      <p>🕐 {{ s.createdAt | date:'short' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

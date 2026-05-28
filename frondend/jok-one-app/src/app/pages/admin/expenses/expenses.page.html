@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gastos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen del mes</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>💰 Total gastos: {{ monthlyTotal | number:'1.2-2' }}</p>
+      <p *ngFor="let cat of categories">
+        <span *ngIf="byCategory[cat.value]">
+          {{ cat.label }}: {{ byCategory[cat.value] | number:'1.2-2' }}
+        </span>
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <h3>Registrar gasto</h3>
+
+  <ion-item>
+    <ion-label>Categoría</ion-label>
+    <ion-select [(ngModel)]="newExpense.category">
+      <ion-select-option *ngFor="let cat of categories" [value]="cat.value">
+        {{ cat.label }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Descripción</ion-label>
+    <ion-textarea [(ngModel)]="newExpense.description"></ion-textarea>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Monto</ion-label>
+    <ion-input type="number" [(ngModel)]="newExpense.amount"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" (click)="createExpense()" style="margin-top: 20px">
+    Registrar gasto
+  </ion-button>
+
+  <h3>Gastos del mes</h3>
+
+  <ion-card *ngFor="let e of expenses">
+    <ion-card-content>
+      <p>{{ getCategoryLabel(e.category) }}</p>
+      <p>💰 {{ e.amount | number:'1.2-2' }}</p>
+      <p *ngIf="e.description">📝 {{ e.description }}</p>
+      <p>🕐 {{ e.createdAt | date:'short' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

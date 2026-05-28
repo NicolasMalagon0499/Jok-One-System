@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">jok-one-app</string>
+    <string name="title_activity_main">jok-one-app</string>
+    <string name="package_name">com.jokone.app</string>
+    <string name="custom_url_scheme">com.jokone.app</string>
+</resources>

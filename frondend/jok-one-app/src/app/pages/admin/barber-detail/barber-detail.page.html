@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ barberName }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <h3>Servicios registrados</h3>
+
+  <ion-card *ngFor="let s of history">
+    <ion-card-content>
+      <p>✂️ Precio: {{ s.price }}</p>
+      <p>💵 Propina: {{ s.tip }}</p>
+      <p>👤 Cliente: {{ s.clientType === 'NEW' ? '🆕 Nuevo' : '👤 Antiguo' }}</p>
+      <p>💳 Efectivo: {{ s.cashAmount }} | QR: {{ s.qrAmount }}</p>
+      <p *ngIf="s.specialEvent">🎉 {{ s.specialEvent }}</p>
+      <p>🕐 {{ s.createdAt | date:'short' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

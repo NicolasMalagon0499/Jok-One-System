@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dashboard Admin</ion-title>
+    <ion-button slot="end" (click)="logout()" fill="clear">Salir</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Alerta stock bajo -->
+  <ion-card color="warning" *ngIf="lowStockProducts.length > 0">
+    <ion-card-header>
+      <ion-card-title>⚠️ Stock bajo</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngFor="let p of lowStockProducts">
+        {{ p.name }}: {{ p.stock }} unidades (mínimo: {{ p.minStock }})
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Selector de período -->
+  <ion-item>
+    <ion-label>Período</ion-label>
+    <ion-select [(ngModel)]="period" (ionChange)="onPeriodChange()">
+      <ion-select-option value="daily">📅 Hoy</ion-select-option>
+      <ion-select-option value="weekly">📆 Semana</ion-select-option>
+      <ion-select-option value="biweekly">🗓️ Quincena</ion-select-option>
+      <ion-select-option value="monthly">📅 Mes</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- Resumen del negocio -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen del Negocio</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>💰 Ingresos negocio: {{ businessSummary.totalBusinessShare | number:'1.2-2' }}</p>
+      <p>🔄 Compensaciones: {{ businessSummary.totalCompensations | number:'1.2-2' }}</p>
+      <p>✅ Ganancia neta: {{ businessSummary.netBusiness | number:'1.2-2' }}</p>
+      <p>💸 Gastos: {{ businessSummary.totalExpenses | number:'1.2-2' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" (click)="router.navigate(['/admin/inventory'])" style="margin-bottom: 20px">
+    📦 Gestionar Inventario
+  </ion-button>
+
+  <ion-button expand="block" (click)="router.navigate(['/admin/expenses'])" style="margin-bottom: 10px">
+  💸 Gestionar Gastos
+</ion-button>
+
+  <!-- Lista de barberos -->
+  <h3>Barberos</h3>
+
+  <ion-card *ngFor="let barber of allBarbers">
+    <ion-card-header>
+      <ion-card-title>
+        ✂️ {{ barber.name }}
+        <ion-badge *ngIf="getBarberEarnings(barber.id)" color="success">
+          ${{ getBarberEarnings(barber.id)?.barberTotal | number:'1.2-2' }}
+        </ion-badge>
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ng-container *ngIf="getBarberEarnings(barber.id) as earnings">
+        <p>✂️ Servicios: {{ earnings.totalServices | number:'1.2-2' }}</p>
+        <p>💵 Propinas: {{ earnings.totalTips | number:'1.2-2' }}</p>
+        <p>🧴 Productos: {{ earnings.totalProducts | number:'1.2-2' }}</p>
+        <p>💰 Total: {{ earnings.barberTotal | number:'1.2-2' }}</p>
+        <p>🔄 Compensación: {{ earnings.compensation | number:'1.2-2' }}</p>
+        <p>💵 Efectivo: {{ earnings.totalCash | number:'1.2-2' }}</p>
+        <p>📱 QR: {{ earnings.totalQr | number:'1.2-2' }}</p>
+      </ng-container>
+      <p *ngIf="!getBarberEarnings(barber.id)">Sin servicios en este período</p>
+      <ion-button fill="outline" (click)="router.navigate(['/admin/barber-detail', barber.id, barber.name])">
+        Ver servicios
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
