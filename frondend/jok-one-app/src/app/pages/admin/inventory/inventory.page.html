@@ -1,9 +1,22 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Inventario</ion-title>
+
+    <div class="header-wrapper">
+      <div class="header-start">
+        <ion-buttons>
+          <ion-back-button defaultHref="/admin/dashboard" color="light"></ion-back-button>
+        </ion-buttons>
+      </div>
+
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="Jok One" class="topbar-logo">
+      </div>
+
+      <div class="header-end">
+        <app-theme-toggle></app-theme-toggle>
+      </div>
+    </div>
+
   </ion-toolbar>
 </ion-header>
 
@@ -22,35 +35,76 @@
   </ion-item>
 
   <ion-item>
-    <ion-label position="floating">Stock</ion-label>
+    <ion-label position="floating">Stock inicial</ion-label>
     <ion-input type="number" [(ngModel)]="newProduct.stock"></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label position="floating">Precio de venta</ion-label>
+    <ion-label position="floating">Avisar cuando el stock llegue a</ion-label>
+    <ion-input type="number" [(ngModel)]="newProduct.minStock"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Precio de venta (al cliente)</ion-label>
     <ion-input type="number" [(ngModel)]="newProduct.salePrice"></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label position="floating">Precio de costo</ion-label>
+    <ion-label position="floating">Precio de costo (lo que pagaste)</ion-label>
     <ion-input type="number" [(ngModel)]="newProduct.costPrice"></ion-input>
   </ion-item>
 
-  <ion-button expand="block" (click)="createProduct()" style="margin-top: 20px">
+  <ion-button expand="block" (click)="createProduct()" class="ion-margin-top">
     Crear producto
   </ion-button>
 
-  <h3>Productos</h3>
+  <h3>Productos en Inventario</h3>
 
   <ion-card *ngFor="let p of products">
     <ion-card-header>
-      <ion-card-title>{{ p.name }}</ion-card-title>
+      <ion-card-title>
+        {{ p.name }}
+        <ion-badge *ngIf="p.stock <= 0" color="danger">Agotado</ion-badge>
+        <ion-badge *ngIf="p.stock > 0 && p.stock <= p.minStock" color="warning">Stock bajo</ion-badge>
+      </ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
-      <p>📦 Stock: {{ p.stock }}</p>
-      <p>💰 Precio venta: {{ p.salePrice }}</p>
-      <p>💵 Precio costo: {{ p.costPrice }}</p>
-      <p *ngIf="p.description">📝 {{ p.description }}</p>
+      <div class="stat-row">
+        <span class="stat-label">📦 Stock</span>
+        <span class="stat-value">{{ p.stock }} u. (mín. {{ p.minStock }})</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💰 Precio venta</span>
+        <span class="stat-value success">{{ p.salePrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💵 Precio costo</span>
+        <span class="stat-value danger">{{ p.costPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <p *ngIf="p.description" class="muted">📝 {{ p.description }}</p>
+
+      <ion-row class="product-actions">
+        <ion-col size="4">
+          <ion-button expand="block" color="medium" fill="outline" size="small" (click)="editarProducto(p)">
+            <ion-icon slot="start" name="create-outline"></ion-icon>
+            Editar
+          </ion-button>
+        </ion-col>
+        <ion-col size="4">
+          <ion-button expand="block" color="warning" fill="outline" size="small" (click)="modificarStock(p)">
+            <ion-icon slot="start" name="create-outline"></ion-icon>
+            Stock
+          </ion-button>
+        </ion-col>
+        <ion-col size="4">
+          <ion-button expand="block" color="danger" fill="outline" size="small" (click)="confirmarEliminar(p)">
+            <ion-icon slot="start" name="trash-outline"></ion-icon>
+            Eliminar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
     </ion-card-content>
   </ion-card>
 

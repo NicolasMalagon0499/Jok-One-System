@@ -1,2 +1,488 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+// =============================================================================
+// JOK ONE — TEMA (paleta, tipografía y layout compartido)
+// La app nació 100% oscura; ese sigue siendo el tema por defecto. El modo
+// claro se activa poniendo [data-theme="light"] en <html> (ver
+// ThemeService) y solo redefine los tokens de fondo/superficie/texto — los
+// colores de marca (primary/secondary/tertiary/success/warning/danger) se
+// mantienen para que la identidad visual no cambie entre temas.
+// =============================================================================
+
+:root {
+  // ---- Fondo y texto base -------------------------------------------------
+  --ion-background-color: #0c0c0f;
+  --ion-background-color-rgb: 12, 12, 15;
+  --ion-text-color: #f4f4f5;
+  --ion-text-color-rgb: 244, 244, 245;
+
+  // Superficie de tarjetas / items / toolbars
+  --ion-item-background: #18181c;
+  --ion-item-color: #f4f4f5;
+  --ion-toolbar-background: #0c0c0f;
+  --ion-toolbar-color: #f4f4f5;
+  --ion-card-background: #18181c;
+  --ion-card-color: #f4f4f5;
+
+  // ---- Primario: azul de marca (CTAs principales) -------------------------
+  --ion-color-primary: #3461ff;
+  --ion-color-primary-rgb: 52, 97, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #2e55e0;
+  --ion-color-primary-tint: #4c74ff;
+
+  // ---- Secundario: dorado (destacados, comisiones, cifras clave) ----------
+  --ion-color-secondary: #d4a72c;
+  --ion-color-secondary-rgb: 212, 167, 44;
+  --ion-color-secondary-contrast: #1a1200;
+  --ion-color-secondary-contrast-rgb: 26, 18, 0;
+  --ion-color-secondary-shade: #bb9327;
+  --ion-color-secondary-tint: #d9b245;
+
+  // ---- Terciario: violeta (garantías, avisos especiales) ------------------
+  --ion-color-tertiary: #7c5cff;
+  --ion-color-tertiary-rgb: 124, 92, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #6d51e0;
+  --ion-color-tertiary-tint: #8c70ff;
+
+  // ---- Éxito / positivo -----------------------------------------------------
+  --ion-color-success: #16a34a;
+  --ion-color-success-rgb: 22, 163, 74;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #138f41;
+  --ion-color-success-tint: #32ae60;
+
+  // ---- Advertencia ----------------------------------------------------------
+  --ion-color-warning: #f59e0b;
+  --ion-color-warning-rgb: 245, 158, 11;
+  --ion-color-warning-contrast: #1a1200;
+  --ion-color-warning-contrast-rgb: 26, 18, 0;
+  --ion-color-warning-shade: #d88b0a;
+  --ion-color-warning-tint: #f6aa28;
+
+  // ---- Peligro / negativo -----------------------------------------------
+  --ion-color-danger: #ef4444;
+  --ion-color-danger-rgb: 239, 68, 68;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #d23c3c;
+  --ion-color-danger-tint: #f15a5a;
+
+  // ---- Medio (texto secundario / iconos apagados) -------------------------
+  --ion-color-medium: #8b8b93;
+  --ion-color-medium-rgb: 139, 139, 147;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #7a7a81;
+  --ion-color-medium-tint: #97979e;
+
+  // ---- Oscuro / Claro (fills alternos) -----------------------------------
+  --ion-color-dark: #1c1c1f;
+  --ion-color-dark-rgb: 28, 28, 31;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #19191b;
+  --ion-color-dark-tint: #37373a;
+
+  --ion-color-light: #e4e4e7;
+  --ion-color-light-rgb: 228, 228, 231;
+  --ion-color-light-contrast: #1a1a1a;
+  --ion-color-light-contrast-rgb: 26, 26, 26;
+  --ion-color-light-shade: #c9c9cc;
+  --ion-color-light-tint: #e7e7e9;
+
+  // ---- Tokens propios de la app (no son parte del sistema Ionic) ---------
+  --app-surface: #18181c;
+  --app-surface-raised: #232328;
+  --app-border: rgba(255, 255, 255, 0.08);
+  --app-muted: #a1a1aa;
+  --app-radius: 16px;
+  --app-radius-sm: 10px;
+  --app-content-max-width: 480px;
+  --app-gap: 12px;
+}
+
+// ---- Modo claro ------------------------------------------------------------
+:root[data-theme="light"] {
+  --ion-background-color: #f4f4f7;
+  --ion-background-color-rgb: 244, 244, 247;
+  --ion-text-color: #1c1c1f;
+  --ion-text-color-rgb: 28, 28, 31;
+
+  --ion-item-background: #ffffff;
+  --ion-item-color: #1c1c1f;
+  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-color: #1c1c1f;
+  --ion-card-background: #ffffff;
+  --ion-card-color: #1c1c1f;
+
+  --ion-color-medium: #6b6b76;
+  --ion-color-medium-rgb: 107, 107, 118;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #5e5e68;
+  --ion-color-medium-tint: #7a7a84;
+
+  --ion-color-dark: #1c1c1f;
+  --ion-color-dark-rgb: 28, 28, 31;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #19191b;
+  --ion-color-dark-tint: #37373a;
+
+  --ion-color-light: #ececef;
+  --ion-color-light-rgb: 236, 236, 239;
+  --ion-color-light-contrast: #1c1c1f;
+  --ion-color-light-contrast-rgb: 28, 28, 31;
+  --ion-color-light-shade: #d0d0d3;
+  --ion-color-light-tint: #eeeef1;
+
+  --app-surface: #ffffff;
+  --app-surface-raised: #ffffff;
+  --app-border: rgba(0, 0, 0, 0.09);
+  --app-muted: #6b6b76;
+
+  // El logo está pensado para fondo oscuro (fondo negro, texto/líneas
+  // blancas); en modo claro se invierte para que quede fondo claro con
+  // texto oscuro en vez de un bloque negro flotando sobre la página.
+  // hue-rotate(180deg) compensa el corrimiento de tono que deja invert()
+  // para que los colores del palo de barbero (rojo/azul) no queden
+  // invertidos a cian/naranja.
+  .topbar-logo,
+  .full-width-logo {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+// =============================================================================
+// Layout compartido: una sola columna centrada y consistente en toda la app,
+// en vez de que cada ion-item/ion-card/ion-button se limite por separado
+// (eso hacía que no quedaran alineados entre sí).
+// =============================================================================
+ion-content {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 14px;
+  --padding-bottom: 32px;
+
+  &::part(scroll) {
+    max-width: var(--app-content-max-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+ion-card {
+  --background: var(--app-surface);
+  border-radius: var(--app-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  margin: 0 0 var(--app-gap);
+}
+
+ion-card-title {
+  color: var(--ion-text-color);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+ion-item {
+  --background: var(--app-surface);
+  --border-color: var(--app-border);
+  --border-width: 1px;
+  --border-style: solid;
+  --border-radius: var(--app-radius-sm);
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  margin-bottom: 10px;
+  border-radius: var(--app-radius-sm);
+}
+
+ion-button {
+  --border-radius: var(--app-radius-sm);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+h1, h2, h3, h4 {
+  color: var(--ion-text-color);
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 22px 2px 10px;
+  opacity: 0.9;
+}
+
+// Encabezado estándar con el logo centrado (usado en casi todas las páginas).
+// Grid de 3 columnas en vez de flex+spacers a medida: así el logo queda
+// centrado de verdad sin importar si a los lados hay un botón, un ícono de
+// volver, o nada — antes cada página intentaba "adivinar" el ancho del lado
+// contrario con un div fantasma del mismo tamaño, y cuando no coincidía
+// (o faltaba del todo) el logo quedaba corrido.
+.header-wrapper {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  height: 56px;
+  background: var(--ion-toolbar-background);
+}
+
+// display:flex + flex-wrap:nowrap es clave: sin esto, en pantallas angostas
+// el botón "Salir" (junto al ícono de tema) no cabía en el espacio de 1fr y
+// pasaba a una segunda línea invisible, recortada por la altura fija del
+// toolbar — parecía que el botón simplemente no existía.
+.header-start {
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.header-end {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 2px;
+
+  // Más compacto que el padding por defecto de Ionic para que quepa junto
+  // al botón de tema incluso en pantallas de ~360px de ancho.
+  ion-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+    font-size: 0.82rem;
+    margin: 0;
+    white-space: nowrap;
+  }
+}
+
+// El color "light" en los botones del header (Salir, volver) está pensado
+// para leerse bien sobre CUALQUIER toolbar, pero --ion-color-light es un
+// tono fijo casi blanco: en modo claro, sobre un toolbar también claro,
+// quedaba casi invisible. --ion-toolbar-color ya es el texto correcto para
+// el toolbar en cada tema (blanco en oscuro, oscuro en claro), así que se
+// reutiliza aquí en vez del color "light" genérico.
+ion-header {
+  ion-button[color="light"],
+  ion-back-button[color="light"] {
+    --color: var(--ion-toolbar-color);
+  }
+}
+
+.logo-container {
+  grid-column: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.topbar-logo {
+  height: 40px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.custom-logo-toolbar {
+  --background: var(--ion-toolbar-background);
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.full-width-logo {
+  width: 100%;
+  max-height: 80px;
+  object-fit: contain;
+  display: block;
+}
+
+// Monto de dinero destacado (reemplaza los `style="color:#00e676"` sueltos)
+.currency-amount {
+  font-weight: 700;
+  color: var(--ion-color-success);
+}
+
+// Fila de estadística reutilizable: etiqueta a la izquierda, valor a la
+// derecha. La usan dashboard, inventario, gastos y detalle de barbero para
+// que las cifras de dinero luzcan igual en toda la app.
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--app-border);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.stat-label {
+  color: var(--app-muted);
+  font-size: 0.88rem;
+}
+
+// La tarjeta de resumen (color="primary") pinta el azul de marca a pantalla
+// completa. Sin este ajuste pasaban dos cosas: el azul de los botones (muy
+// saturado) se veía "encendido" al cubrir toda una tarjeta, y las etiquetas
+// (Servicios, Propinas…) heredaban el gris neutro de --app-muted, pensado
+// para fondos normales, que sobre ese azul se leía casi apagado/ilegible.
+// Se corrige solo dentro de esta tarjeta (no afecta botones ni otros usos
+// de --ion-color-primary) con un azul más mate y etiquetas en blanco
+// semitransparente en vez del gris neutro.
+ion-card.ion-color-primary {
+  --ion-color-primary: #2c4bb0;
+  --ion-color-primary-rgb: 44, 75, 176;
+
+  .stat-label {
+    color: rgba(255, 255, 255, 0.78);
+  }
+}
+
+.stat-value {
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-align: right;
+  white-space: nowrap;
+
+  &.success { color: var(--ion-color-success); }
+  &.warning { color: var(--ion-color-warning); }
+  &.danger { color: var(--ion-color-danger); }
+}
+
+.stat-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  margin-top: 6px;
+  border-top: 2px solid var(--app-border);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+// Texto secundario / de apoyo, consistente en toda la app
+.section-subtitle {
+  margin: 18px 2px 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--app-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.muted {
+  color: var(--app-muted);
+}
+
+.expense-date {
+  font-size: 0.82rem;
+  color: var(--app-muted);
+}
+
+// =============================================================================
+// Overlays de Ionic (alert / datetime / select) — deben verse consistentes
+// con el resto del tema, no como una hoja de estilos aparte.
+// =============================================================================
+// El ion-alert de esta versión de Ionic se renderiza en DOM normal (sin
+// shadow root) con sus propios colores fijos pensados para modo claro
+// (texto gris oscuro sobre blanco). Como esta app es 100% oscura, esos
+// valores por defecto quedan casi invisibles sobre nuestro fondo oscuro —
+// por eso todo lo de aquí necesita !important para ganarle a esa hoja de
+// estilos interna de Ionic.
+ion-alert {
+  --background: var(--app-surface-raised);
+  --color: var(--ion-text-color);
+
+  .alert-wrapper {
+    background: var(--app-surface-raised) !important;
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius);
+  }
+
+  .alert-head,
+  .alert-title,
+  .alert-sub-title {
+    color: var(--ion-text-color) !important;
+  }
+
+  .alert-message {
+    color: var(--app-muted) !important;
+  }
+
+  .alert-input-group,
+  .alert-radio-group,
+  .alert-checkbox-group {
+    border-color: var(--app-border) !important;
+  }
+
+  .alert-input {
+    color: var(--ion-text-color) !important;
+    background: var(--app-surface) !important;
+    caret-color: var(--ion-text-color);
+  }
+
+  .alert-radio-label,
+  .alert-checkbox-label {
+    color: var(--ion-text-color) !important;
+  }
+
+  // Ionic resalta la fila marcada/enfocada con un gris claro pensado para
+  // modo claro; en modo oscuro eso se ve como una barra blanca fuera de
+  // lugar, así que la reemplazamos por un resaltado oscuro coherente.
+  .alert-radio-button,
+  .alert-checkbox-button {
+    background: transparent !important;
+
+    &[aria-checked="true"],
+    &.ion-focused {
+      background: var(--app-surface) !important;
+    }
+  }
+
+  .alert-button {
+    color: var(--ion-color-primary-tint) !important;
+    font-weight: 600;
+  }
+
+  .alert-radio-button[aria-checked="true"] .alert-radio-inner {
+    background-color: var(--ion-color-primary);
+    border-color: var(--ion-color-primary);
+  }
+
+  .alert-radio-icon,
+  .alert-checkbox-icon {
+    border-color: var(--app-muted) !important;
+  }
+}
+
+ion-datetime {
+  background: var(--app-surface-raised);
+  color: var(--ion-text-color);
+  border-radius: var(--app-radius);
+  margin-top: 12px;
+}
+
+ion-badge {
+  border-radius: 999px;
+  font-weight: 700;
+}

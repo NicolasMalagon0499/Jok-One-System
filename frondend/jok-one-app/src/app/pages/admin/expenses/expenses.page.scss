@@ -1,0 +1,31 @@
+ion-toolbar {
+  --background: var(--ion-toolbar-background);
+  --border-color: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.header-wrapper {
+  height: 64px;
+}
+
+.header-start {
+  padding-left: 8px;
+}
+
+.topbar-logo {
+  height: 48px !important;
+  width: auto;
+  object-fit: contain;
+}
+
+.expense-category {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.expense-actions {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--app-border);
+}

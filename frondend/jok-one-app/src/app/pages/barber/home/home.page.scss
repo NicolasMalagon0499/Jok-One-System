@@ -1,0 +1,118 @@
+ion-toolbar {
+  --background: var(--ion-toolbar-background);
+  --border-color: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.header-wrapper {
+  height: 60px;
+  padding: 0 10px;
+}
+
+.topbar-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.greeting {
+  margin: 4px 2px 14px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.custom-date-picker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.field-hint {
+  margin: 2px 0 14px 4px;
+  font-size: 0.78rem;
+  color: var(--app-muted);
+
+  &.danger { color: var(--ion-color-danger-tint); }
+  &.success { color: var(--ion-color-success-tint); }
+}
+
+.price-preview {
+  font-size: 0.85rem;
+  color: var(--ion-color-success-tint);
+  margin-top: -8px;
+}
+
+.pending-warning {
+  font-size: 0.8rem;
+  color: var(--ion-color-warning-tint);
+  margin-top: -8px;
+}
+
+.cart-heading {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--app-muted);
+  margin: 12px 4px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.qty-stepper-label {
+  color: var(--app-muted);
+  font-size: 0.85rem;
+}
+
+.qty-stepper-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  ion-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    margin: 0;
+    height: 32px;
+  }
+}
+
+.qty-stepper-input {
+  width: 48px;
+  text-align: center;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.qty-badge {
+  min-width: 28px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.total-a-cobrar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface);
+  font-size: 1.05rem;
+}
+
+.record-title {
+  font-size: 1.05rem;
+}
+
+.history-actions {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--app-border);
+}

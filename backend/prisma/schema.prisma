@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  // Si es false, este barbero nunca recibe el mínimo garantizado diario
+  // ($30.000) aunque su ganancia bruta del día quede por debajo — para
+  // barberos de medio tiempo que no tienen derecho a esa garantía.
+  hasGuarantee Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  services      Service[]
+  guaranteeDays GuaranteeDay[]
+  cashBases     CashBase[]
+  cashAdvances  CashAdvance[]
+}
+
+enum ClientType {
+  NEW
+  RETURNING
+}
+
+model Service {
+  id           String     @id @default(uuid())
+  price        Float
+  tip          Float
+  cashAmount   Float      @default(0)
+  qrAmount     Float      @default(0)
+  specialEvent String?
+  clientType   ClientType @default(RETURNING)
+  createdAt    DateTime   @default(now())
+
+  barberId String
+  barber   User   @relation(fields: [barberId], references: [id])
+
+  products ServiceProduct[]
+}
+
+// A barber's manual claim that a given (Bogotá calendar) day with zero
+// registered services should still receive the minimum daily guarantee —
+// e.g. they were present all day but no clients came in. Rest days are left
+// unclaimed and get no guarantee. `date` stores the UTC instant marking the
+// start of that Bogotá day (see bogota-time.ts).
+model GuaranteeDay {
+  id        String   @id @default(uuid())
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  barberId String
+  barber   User   @relation(fields: [barberId], references: [id])
+
+  @@unique([barberId, date])
+}
+
+// Base de caja (cambio) que se le entrega al barbero al iniciar el día para
+// dar vueltas. Una por barbero por día. `date` es el mismo marcador UTC de
+// inicio del día en Bogotá que usan GuaranteeDay/CashAdvance.
+model CashBase {
+  id        String   @id @default(uuid())
+  amount    Float    @default(50000)
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  barberId String
+  barber   User   @relation(fields: [barberId], references: [id])
+
+  @@unique([barberId, date])
+}
+
+// Un "vale": adelanto en efectivo que el barbero saca de su propia caja
+// durante el día. Se descuenta de lo que se le debe pagar y de lo que debe
+// quedar en efectivo en el cierre. Puede haber varios por día.
+model CashAdvance {
+  id        String   @id @default(uuid())
+  amount    Float
+  note      String?
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  barberId String
+  barber   User   @relation(fields: [barberId], references: [id])
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  stock       Int
+  minStock    Int      @default(3)
+  salePrice   Float
+  costPrice   Float
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  serviceProducts ServiceProduct[]
+}
+
+enum ProductUseType {
+  SOLD
+  USED
+}
+
+model ServiceProduct {
+  id       String         @id @default(uuid())
+  quantity Int
+  type     ProductUseType @default(SOLD)
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  BARBER
+}
+
+enum ExpenseCategory {
+  RENT
+  WATER
+  ELECTRICITY
+  INTERNET
+  REPAIR
+  OTHER
+}
+
+model Expense {
+  id          String          @id @default(uuid())
+  category    ExpenseCategory
+  description String?
+  amount      Float
+  createdAt   DateTime        @default(now())
+}

@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Servicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Cliente</ion-label>
+    <ion-select [(ngModel)]="service.clientType">
+      <ion-select-option value="NEW">🆕 Cliente nuevo</ion-select-option>
+      <ion-select-option value="RETURNING">👤 Cliente antiguo</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Precio</ion-label>
+    <ion-input type="number" [(ngModel)]="service.price"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Propina</ion-label>
+    <ion-input type="number" [(ngModel)]="service.tip"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Efectivo</ion-label>
+    <ion-input type="number" [(ngModel)]="service.cashAmount"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">QR</ion-label>
+    <ion-input type="number" [(ngModel)]="service.qrAmount"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Nota del evento</ion-label>
+    <ion-input type="text" [(ngModel)]="service.specialEvent"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" (click)="save()" style="margin-top: 20px;">
+    Guardar Cambios
+  </ion-button>
+</ion-content>

@@ -1,13 +1,22 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>Dashboard Admin</ion-title>
-    <ion-button slot="end" (click)="logout()" fill="clear">Salir</ion-button>
+    <div class="header-wrapper">
+      <div class="header-start"></div>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="Jok One" class="topbar-logo">
+      </div>
+      <div class="header-end">
+        <app-theme-toggle></app-theme-toggle>
+        <ion-button (click)="logout()" fill="clear" color="light" class="btn-logout">
+          Salir
+        </ion-button>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content>
 
-  <!-- Alerta stock bajo -->
   <ion-card color="warning" *ngIf="lowStockProducts.length > 0">
     <ion-card-header>
       <ion-card-title>⚠️ Stock bajo</ion-card-title>
@@ -19,65 +28,176 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Selector de período -->
+  <!-- Selector de Período -->
   <ion-item>
     <ion-label>Período</ion-label>
     <ion-select [(ngModel)]="period" (ionChange)="onPeriodChange()">
+      <ion-select-option value="monthly">📅 Mes</ion-select-option>
       <ion-select-option value="daily">📅 Hoy</ion-select-option>
       <ion-select-option value="weekly">📆 Semana</ion-select-option>
       <ion-select-option value="biweekly">🗓️ Quincena</ion-select-option>
-      <ion-select-option value="monthly">📅 Mes</ion-select-option>
+      <ion-select-option value="custom">🔍 Fecha Específica</ion-select-option>
     </ion-select>
   </ion-item>
 
-  <!-- Resumen del negocio -->
+  <!-- Selector de Fecha Específica (solo aparece si el período es 'custom') -->
+  <ion-item *ngIf="period === 'custom'">
+    <ion-label position="stacked">
+      <div class="custom-date-picker">
+        <span>Selecciona el día</span>
+        <ion-button fill="clear" color="danger" size="small" (click)="period = 'daily'; loadEarnings()">
+          ✕ Cerrar
+        </ion-button>
+      </div>
+    </ion-label>
+
+    <ion-datetime
+      presentation="date"
+      [(ngModel)]="customDate"
+      (ionChange)="onCustomDateChange()"
+      locale="es-ES">
+    </ion-datetime>
+  </ion-item>
+
+  <p class="section-subtitle" *ngIf="period === 'custom' && customDate">
+    📅 Mostrando datos del {{ selectedDateLabel }}
+  </p>
+
   <ion-card>
     <ion-card-header>
       <ion-card-title>Resumen del Negocio</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>💰 Ingresos negocio: {{ businessSummary.totalBusinessShare | number:'1.2-2' }}</p>
-      <p>🔄 Compensaciones: {{ businessSummary.totalCompensations | number:'1.2-2' }}</p>
-      <p>✅ Ganancia neta: {{ businessSummary.netBusiness | number:'1.2-2' }}</p>
-      <p>💸 Gastos: {{ businessSummary.totalExpenses | number:'1.2-2' }}</p>
+      <p class="section-subtitle">Ingresos</p>
+      <div class="stat-row">
+        <span class="stat-label">🧾 Ingresos totales (bruto)</span>
+        <span class="stat-value">{{ businessSummary.totalRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">✂️ Cantidad de servicios</span>
+        <span class="stat-value">{{ businessSummary.totalServiceCount }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">🧴 Productos vendidos (bruto)</span>
+        <span class="stat-value">{{ businessSummary.totalProductsSold | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+
+      <p class="section-subtitle">Ganancia del negocio</p>
+      <div class="stat-row">
+        <span class="stat-label">📦 Ganancia en productos</span>
+        <span class="stat-value">{{ businessSummary.totalProductProfit | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💈 Ganancia en cortes (50%)</span>
+        <span class="stat-value">{{ (businessSummary.totalBusinessShare - businessSummary.totalProductProfit) | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row" *ngIf="businessSummary.totalCompensations > 0">
+        <span class="stat-label">🔄 Garantías pagadas a barberos</span>
+        <span class="stat-value warning">−{{ businessSummary.totalCompensations | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-total">
+        <span>{{ showExpenses ? 'Ganancia antes de gastos' : '✅ Ganancia del período' }}</span>
+        <span class="stat-value" [ngClass]="!showExpenses ? (businessSummary.netBeforeExpenses >= 0 ? 'success' : 'danger') : ''">{{ businessSummary.netBeforeExpenses | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+
+      <!-- Los gastos (arriendo, servicios, etc.) se registran con cadencia
+           mensual: mostrarlos contra un período distinto al mes completo es
+           engañoso (un día o semana cualquiera puede aparecer con "-$0" o,
+           si justo ahí se pagó el arriendo, con un número enorme que no
+           refleja la operación real de ese período). Por eso la cobertura
+           de gastos solo se muestra cuando el período es "Mes". -->
+      <ng-container *ngIf="showExpenses">
+        <div class="stat-row">
+          <span class="stat-label">💸 Gastos del período</span>
+          <span class="stat-value danger">−{{ businessSummary.totalExpenses | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-total">
+          <span>✅ Ganancia neta</span>
+          <span class="stat-value" [ngClass]="businessSummary.netBusiness >= 0 ? 'success' : 'danger'">{{ businessSummary.netBusiness | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+
+        <div class="coverage-banner" [class.covered]="businessSummary.expensesRemaining <= 0">
+          <ng-container *ngIf="businessSummary.expensesRemaining > 0; else covered">
+            ⚠️ Faltan <strong>{{ businessSummary.expensesRemaining | currency:'COP':'symbol-narrow':'1.0-0' }}</strong> en ganancia para cubrir los gastos de este período.
+          </ng-container>
+          <ng-template #covered>
+            ✅ Los gastos de este período ya están cubiertos.
+          </ng-template>
+        </div>
+      </ng-container>
     </ion-card-content>
   </ion-card>
 
-  <ion-button expand="block" (click)="router.navigate(['/admin/inventory'])" style="margin-bottom: 20px">
+  <ion-button expand="block" (click)="router.navigate(['/admin/inventory'])">
     📦 Gestionar Inventario
   </ion-button>
 
-  <ion-button expand="block" (click)="router.navigate(['/admin/expenses'])" style="margin-bottom: 10px">
-  💸 Gestionar Gastos
-</ion-button>
+  <ion-button expand="block" (click)="router.navigate(['/admin/expenses'])">
+    💸 Gestionar Gastos
+  </ion-button>
 
-  <!-- Lista de barberos -->
   <h3>Barberos</h3>
 
   <ion-card *ngFor="let barber of allBarbers">
     <ion-card-header>
       <ion-card-title>
-        ✂️ {{ barber.name }}
+        💈 {{ barber.name }}
         <ion-badge *ngIf="getBarberEarnings(barber.id)" color="success">
-          ${{ getBarberEarnings(barber.id)?.barberTotal | number:'1.2-2' }}
+          {{ getBarberEarnings(barber.id)?.barberTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
         </ion-badge>
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ng-container *ngIf="getBarberEarnings(barber.id) as earnings">
-        <p>✂️ Servicios: {{ earnings.totalServices | number:'1.2-2' }}</p>
-        <p>💵 Propinas: {{ earnings.totalTips | number:'1.2-2' }}</p>
-        <p>🧴 Productos: {{ earnings.totalProducts | number:'1.2-2' }}</p>
-        <p>💰 Total: {{ earnings.barberTotal | number:'1.2-2' }}</p>
-        <p>🔄 Compensación: {{ earnings.compensation | number:'1.2-2' }}</p>
-        <p>💵 Efectivo: {{ earnings.totalCash | number:'1.2-2' }}</p>
-        <p>📱 QR: {{ earnings.totalQr | number:'1.2-2' }}</p>
+        <div class="stat-row">
+          <span class="stat-label">✂️ Valor de las ventas</span>
+          <span class="stat-value">{{ earnings.totalServices | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">📊 Cantidad de servicios</span>
+          <span class="stat-value">{{ earnings.serviceCount }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">💵 Propinas</span>
+          <span class="stat-value">{{ earnings.totalTips | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">🧴 Productos vendidos</span>
+          <span class="stat-value">{{ earnings.totalProductsSold | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row" *ngIf="earnings.totalProductsUsed > 0">
+          <span class="stat-label">🧴 Productos usados (no cobrados)</span>
+          <span class="stat-value">{{ earnings.totalProductsUsed | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">💵 Efectivo</span>
+          <span class="stat-value">{{ earnings.totalCash | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">📱 QR</span>
+          <span class="stat-value">{{ earnings.totalQr | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row" *ngIf="earnings.compensation > 0">
+          <span class="stat-label">🛡️ Garantía cubierta</span>
+          <span class="stat-value warning">{{ earnings.compensation | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row" *ngIf="earnings.totalAdvances > 0">
+          <span class="stat-label">🧾 Vales del período</span>
+          <span class="stat-value danger">−{{ earnings.totalAdvances | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-total">
+          <span>💰 {{ earnings.totalAdvances > 0 ? 'Bruto' : 'Total a pagar' }}</span>
+          <span class="stat-value">{{ earnings.barberTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-total" *ngIf="earnings.totalAdvances > 0">
+          <span>✅ Neto a pagar</span>
+          <span class="stat-value success">{{ earnings.netToPay | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
       </ng-container>
-      <p *ngIf="!getBarberEarnings(barber.id)">Sin servicios en este período</p>
-      <ion-button fill="outline" (click)="router.navigate(['/admin/barber-detail', barber.id, barber.name])">
+      <p *ngIf="!getBarberEarnings(barber.id)" class="muted">Sin servicios en este período</p>
+      <ion-button expand="block" fill="outline" class="ion-margin-top" (click)="router.navigate(['/admin/barber-detail', barber.id, barber.name])">
         Ver servicios
       </ion-button>
     </ion-card-content>
   </ion-card>
-
 </ion-content>

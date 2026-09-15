@@ -2,18 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption, IonBadge } from '@ionic/angular/standalone';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption, IonBadge, IonDatetime } from '@ionic/angular/standalone';
 import { AuthService } from '../../../services/auth';
+import { environment } from '../../../../environments/environment';
+import { formatLongDateEs } from '../../../utils/format-date';
+import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
 
-const API = 'https://awake-grace-production.up.railway.app';
+const API = environment.apiUrl;
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption, IonBadge, CommonModule, FormsModule]
+  imports: [
+    IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
+    IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect,
+    IonSelectOption, IonBadge, IonDatetime, CommonModule, FormsModule, ThemeToggleComponent
+  ]
 })
 export class DashboardPage implements OnInit {
 
@@ -21,7 +28,20 @@ export class DashboardPage implements OnInit {
   allBarbers: any[] = [];
   businessSummary: any = {};
   lowStockProducts: any[] = [];
-  period = 'daily';
+  period = 'monthly';
+  customDate: string = ''; // 📅 Variable para almacenar la fecha específica seleccionada
+
+  get selectedDateLabel(): string {
+    return formatLongDateEs(this.customDate);
+  }
+
+  // Los gastos (arriendo, servicios, etc.) se registran con cadencia mensual,
+  // así que compararlos contra cualquier período que no sea el mes completo
+  // (día, semana, quincena, fecha específica) es engañoso. Esa sección solo
+  // se muestra cuando el período seleccionado es "Mes".
+  get showExpenses(): boolean {
+    return this.period === 'monthly';
+  }
 
   constructor(private auth: AuthService, private http: HttpClient, public router: Router) {}
 
@@ -35,16 +55,25 @@ export class DashboardPage implements OnInit {
     return new HttpHeaders({ Authorization: `Bearer ${this.auth.getToken()}` });
   }
 
-  loadEarnings() {
-    const endpoint = `${API}/services/${this.period}`;
-    this.http.get<any>(endpoint, { headers: this.getHeaders() }).subscribe({
-      next: (res) => {
-        this.barbers = res.barbers;
-        this.businessSummary = res.businessSummary;
-      },
-      error: () => console.error('Error cargando ganancias')
-    });
+ loadEarnings() {
+  let endpoint = `${API}/services/${this.period}`;
+  let params = new HttpParams();
+
+  if (this.period === 'custom') {
+    if (!this.customDate) return;
+    const formattedDate = this.customDate.split('T')[0];
+    endpoint = `${API}/services/daily`; // ← usa daily con fecha
+    params = params.set('date', formattedDate);
   }
+
+  this.http.get<any>(endpoint, { headers: this.getHeaders(), params }).subscribe({
+    next: (res) => {
+      this.barbers = res.barbers || [];
+      this.businessSummary = res.businessSummary || {};
+    },
+    error: (err) => console.error('Error cargando ganancias:', err)
+  });
+}
 
   loadAllBarbers() {
     this.http.get<any[]>(`${API}/users/barbers`, { headers: this.getHeaders() }).subscribe({
@@ -61,7 +90,18 @@ export class DashboardPage implements OnInit {
   }
 
   onPeriodChange() {
-    this.loadEarnings();
+    // Si cambia a algo diferente de custom, cargamos de una vez
+    if (this.period !== 'custom') {
+      this.customDate = ''; // Limpiamos fecha personalizada si cambia a otro filtro
+      this.loadEarnings();
+    }
+  }
+
+  onCustomDateChange() {
+    // Se ejecuta al seleccionar la fecha en el ion-datetime
+    if (this.customDate) {
+      this.loadEarnings();
+    }
   }
 
   getBarberEarnings(barberId: string) {

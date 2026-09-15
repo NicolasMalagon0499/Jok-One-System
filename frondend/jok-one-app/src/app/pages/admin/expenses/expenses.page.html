@@ -1,9 +1,18 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Gastos</ion-title>
+    <div class="header-wrapper">
+      <div class="header-start">
+        <ion-buttons>
+          <ion-back-button defaultHref="/admin/dashboard" color="light"></ion-back-button>
+        </ion-buttons>
+      </div>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="Jok One" class="topbar-logo">
+      </div>
+      <div class="header-end">
+        <app-theme-toggle></app-theme-toggle>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -14,12 +23,14 @@
       <ion-card-title>Resumen del mes</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>💰 Total gastos: {{ monthlyTotal | number:'1.2-2' }}</p>
-      <p *ngFor="let cat of categories">
-        <span *ngIf="byCategory[cat.value]">
-          {{ cat.label }}: {{ byCategory[cat.value] | number:'1.2-2' }}
-        </span>
-      </p>
+      <div class="stat-total">
+        <span>Total gastos</span>
+        <span class="stat-value danger">{{ monthlyTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row" *ngFor="let cat of categories" [hidden]="!byCategory[cat.value]">
+        <span class="stat-label">{{ cat.label }}</span>
+        <span class="stat-value">{{ byCategory[cat.value] | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
     </ion-card-content>
   </ion-card>
 
@@ -44,7 +55,7 @@
     <ion-input type="number" [(ngModel)]="newExpense.amount"></ion-input>
   </ion-item>
 
-  <ion-button expand="block" (click)="createExpense()" style="margin-top: 20px">
+  <ion-button expand="block" (click)="createExpense()" class="ion-margin-top">
     Registrar gasto
   </ion-button>
 
@@ -52,10 +63,28 @@
 
   <ion-card *ngFor="let e of expenses">
     <ion-card-content>
-      <p>{{ getCategoryLabel(e.category) }}</p>
-      <p>💰 {{ e.amount | number:'1.2-2' }}</p>
-      <p *ngIf="e.description">📝 {{ e.description }}</p>
-      <p>🕐 {{ e.createdAt | date:'short' }}</p>
+      <p class="expense-category">{{ getCategoryLabel(e.category) }}</p>
+      <div class="stat-row">
+        <span class="stat-label">💰 Monto</span>
+        <span class="stat-value danger">{{ e.amount | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <p *ngIf="e.description" class="muted">📝 {{ e.description }}</p>
+      <p class="expense-date">🕐 {{ e.createdAt | date:'short' }}</p>
+
+      <ion-row class="expense-actions">
+        <ion-col size="6">
+          <ion-button expand="block" color="medium" fill="outline" size="small" (click)="editExpense(e)">
+            <ion-icon slot="start" name="create-outline"></ion-icon>
+            Editar
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button expand="block" color="danger" fill="outline" size="small" (click)="deleteExpense(e.id)">
+            <ion-icon slot="start" name="trash-outline"></ion-icon>
+            Eliminar
+          </ion-button>
+        </ion-col>
+      </ion-row>
     </ion-card-content>
   </ion-card>
 

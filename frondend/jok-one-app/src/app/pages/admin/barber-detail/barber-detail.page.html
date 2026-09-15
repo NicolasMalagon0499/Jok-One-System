@@ -1,25 +1,214 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
-    </ion-buttons>
-    <ion-title>{{ barberName }}</ion-title>
+    <div class="header-wrapper">
+      <div class="header-start">
+        <ion-buttons>
+          <ion-back-button defaultHref="/admin/dashboard" color="light"></ion-back-button>
+        </ion-buttons>
+      </div>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="Jok One" class="topbar-logo">
+      </div>
+      <div class="header-end">
+        <app-theme-toggle></app-theme-toggle>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  <h3>Estadísticas de: {{ barberName }}</h3>
 
-  <h3>Servicios registrados</h3>
+  <!-- Selector de Período -->
+  <ion-item>
+    <ion-label>Período</ion-label>
+    <ion-select [(ngModel)]="period" (ionChange)="onPeriodChange()">
+      <ion-select-option value="daily">📅 Hoy</ion-select-option>
+      <ion-select-option value="weekly">📆 Semana</ion-select-option>
+      <ion-select-option value="biweekly">🗓️ Quincena</ion-select-option>
+      <ion-select-option value="monthly">📅 Mes</ion-select-option>
+      <ion-select-option value="custom">🔍 Fecha Específica</ion-select-option>
+    </ion-select>
+  </ion-item>
 
-  <ion-card *ngFor="let s of history">
+  <!-- Selector de Fecha Específica (solo aparece si el período es 'custom') -->
+  <ion-item *ngIf="period === 'custom'">
+    <ion-label position="stacked">
+      <div class="custom-date-picker">
+        <span>Selecciona el día</span>
+        <ion-button fill="clear" color="danger" size="small" (click)="period = 'daily'; loadEarnings()">
+          ✕ Cerrar
+        </ion-button>
+      </div>
+    </ion-label>
+
+    <ion-datetime
+      presentation="date"
+      [(ngModel)]="customDate"
+      (ionChange)="onCustomDateChange()"
+      locale="es-ES">
+    </ion-datetime>
+  </ion-item>
+
+  <p class="section-subtitle" *ngIf="period === 'custom' && customDate">
+    📅 Mostrando datos del {{ selectedDateLabel }}
+  </p>
+
+  <ion-card *ngIf="earnings">
+    <ion-card-header>
+      <ion-card-title>Resumen del Periodo</ion-card-title>
+    </ion-card-header>
     <ion-card-content>
-      <p>✂️ Precio: {{ s.price }}</p>
-      <p>💵 Propina: {{ s.tip }}</p>
-      <p>👤 Cliente: {{ s.clientType === 'NEW' ? '🆕 Nuevo' : '👤 Antiguo' }}</p>
-      <p>💳 Efectivo: {{ s.cashAmount }} | QR: {{ s.qrAmount }}</p>
-      <p *ngIf="s.specialEvent">🎉 {{ s.specialEvent }}</p>
-      <p>🕐 {{ s.createdAt | date:'short' }}</p>
+      <div class="stat-row">
+        <span class="stat-label">✂️ Servicios realizados</span>
+        <span class="stat-value">{{ earnings.serviceCount }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💈 Total servicios</span>
+        <span class="stat-value">{{ earnings.totalServices | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💵 Propinas</span>
+        <span class="stat-value">{{ earnings.totalTips | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row" *ngIf="earnings.totalProductsSold > 0">
+        <span class="stat-label">🧴 Productos vendidos</span>
+        <span class="stat-value">{{ earnings.totalProductsSold | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row" *ngIf="earnings.totalProductsUsed > 0">
+        <span class="stat-label">🧴 Productos usados (no cobrados)</span>
+        <span class="stat-value">{{ earnings.totalProductsUsed | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💈 Comisión productos</span>
+        <span class="stat-value">{{ earnings.productShare | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">📊 Ganado real del barbero (antes de garantía)</span>
+        <span class="stat-value">{{ earnings.rawBarberTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row" *ngIf="earnings.compensation > 0">
+        <span class="stat-label">🔄 Garantía aplicada al barbero</span>
+        <span class="stat-value warning">+{{ earnings.compensation | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+
+      <div class="stat-total">
+        <span>💰 {{ earnings.totalAdvances > 0 ? 'Total bruto para el barbero' : 'Total a pagar al barbero' }}</span>
+        <span class="stat-value">{{ earnings.barberTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+
+      <ng-container *ngIf="earnings.totalAdvances > 0">
+        <div class="stat-row">
+          <span class="stat-label">🧾 Vales del período</span>
+          <span class="stat-value danger">−{{ earnings.totalAdvances | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-total">
+          <span>✅ Neto a pagar al barbero</span>
+          <span class="stat-value success">{{ earnings.netToPay | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="isAdmin">
+        <p class="section-subtitle">Para el negocio</p>
+        <div class="stat-row" *ngIf="earnings.productProfit">
+          <span class="stat-label">📦 Ganancia en productos</span>
+          <span class="stat-value">{{ earnings.productProfit | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">📈 Ingreso bruto al negocio (antes de garantía)</span>
+          <span class="stat-value">{{ earnings.businessShare | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row" *ngIf="earnings.compensation > 0">
+          <span class="stat-label">🔄 Garantía pagada (se resta al negocio)</span>
+          <span class="stat-value warning">−{{ earnings.compensation | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-total">
+          <span>✅ Ingreso neto al negocio</span>
+          <span class="stat-value" [ngClass]="(earnings.businessShare - earnings.compensation) >= 0 ? 'success' : 'danger'">
+            {{ (earnings.businessShare - earnings.compensation) | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </span>
+        </div>
+      </ng-container>
     </ion-card-content>
   </ion-card>
 
+  <ion-card *ngIf="cashClose">
+    <ion-card-header>
+      <ion-card-title>Cierre de caja</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngIf="!cashClose.hasBase" class="muted">El barbero aún no ha registrado la base de ese día.</p>
+
+      <ng-container *ngIf="cashClose.hasBase">
+        <div class="stat-row">
+          <span class="stat-label">💵 Base entregada</span>
+          <span class="stat-value">{{ cashClose.base | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">🧾 Efectivo cobrado en servicios</span>
+          <span class="stat-value">{{ cashClose.totalCash | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row" *ngIf="cashClose.totalAdvances > 0">
+          <span class="stat-label">🧾 Vales entregados</span>
+          <span class="stat-value danger">−{{ cashClose.totalAdvances | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+
+        <div class="stat-total">
+          <span>📦 Efectivo en caja</span>
+          <span class="stat-value">{{ cashClose.expectedCash | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+
+        <ng-container *ngIf="cashClose.totalAdvances > 0">
+          <div class="stat-row" *ngIf="cashClose.netToPay >= 0">
+            <span class="stat-label">✅ Neto que falta pagarle</span>
+            <span class="stat-value success">{{ cashClose.netToPay | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+          </div>
+          <div class="stat-row" *ngIf="cashClose.netToPay < 0">
+            <span class="stat-label">⚠️ Tomó de más, te debe</span>
+            <span class="stat-value danger">{{ (cashClose.netToPay * -1) | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="cashClose.advances?.length > 0">
+        <p class="section-subtitle">Vales del día</p>
+        <p *ngFor="let a of cashClose.advances">
+          • {{ a.amount | currency:'COP':'symbol-narrow':'1.0-0' }}<span *ngIf="a.note"> — {{ a.note }}</span>
+        </p>
+      </ng-container>
+    </ion-card-content>
+  </ion-card>
+
+  <h3>Historial reciente</h3>
+  <ion-card *ngFor="let s of history">
+    <ion-card-header>
+      <ion-card-title class="record-title">{{ getRecordIcon(s) }} {{ getRecordLabel(s) }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="stat-row" *ngIf="s.price > 0">
+        <span class="stat-label">✂️ Precio del corte</span>
+        <span class="stat-value">{{ s.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-row" *ngIf="s.tip > 0">
+        <span class="stat-label">💵 Propina</span>
+        <span class="stat-value">{{ s.tip | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+
+      <ng-container *ngIf="s.products?.length > 0">
+        <p class="section-subtitle">Productos en este registro</p>
+        <p *ngFor="let sp of s.products" class="muted">• {{ getProductLine(sp) }}</p>
+      </ng-container>
+
+      <div class="stat-row">
+        <span class="stat-label">👤 Cliente</span>
+        <span class="stat-value">{{ s.clientType === 'NEW' ? '🆕 Nuevo' : '👤 Antiguo' }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💳 Efectivo / QR</span>
+        <span class="stat-value">{{ s.cashAmount | currency:'COP':'symbol-narrow':'1.0-0' }} / {{ s.qrAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <p *ngIf="s.specialEvent" class="muted">🎉 {{ s.specialEvent }}</p>
+      <p class="expense-date">🕐 {{ s.createdAt | date:'short' }}</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

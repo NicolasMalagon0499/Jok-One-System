@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment'; // Ajusta los ../ para llegar a src/environments
 
-const API = 'https://awake-grace-production.up.railway.app';
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string) {
-    return this.http.post<any>(`${API}/auth/login`, { email, password });
+    // Aquí es donde el APK usará la URL de Railway
+    return this.http.post<any>(`${environment.apiUrl}/auth/login`, { email, password });
   }
 
   saveToken(token: string, user: any) {
@@ -31,16 +29,12 @@ export class AuthService {
     return this.getUser()?.role === 'ADMIN';
   }
 
-  isBarber() {
-    return this.getUser()?.role === 'BARBER';
+  isLoggedIn() {
+    return !!this.getToken();
   }
 
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-  }
-
-  isLoggedIn() {
-    return !!this.getToken();
   }
 }

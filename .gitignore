@@ -1,0 +1,4 @@
+# Artefactos de build que no deben versionarse (ya excluidos dentro de cada
+# subproyecto, pero quedaron sueltos en la raíz del repo en algún momento).
+generated/
+frondend/jok-one-app/www.zip

@@ -1,26 +1,44 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Jok One</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="custom-logo-toolbar">
+    <img src="assets/logo.png" alt="Jok One" class="full-width-logo">
+    <div class="login-theme-toggle">
+      <app-theme-toggle></app-theme-toggle>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <h2>Iniciar Sesión</h2>
+<ion-content>
+  
+    <h1 class="login-title">Bienvenido</h1>
+    <p class="login-subtitle">Inicia sesión para continuar</p>
 
-  <ion-item>
-    <ion-label position="floating">Email</ion-label>
-    <ion-input type="email" [(ngModel)]="email"></ion-input>
-  </ion-item>
+    <ion-item class="input-group" lines="none">
+      <ion-label position="floating">Correo electrónico</ion-label>
+      <ion-input 
+        type="email" 
+        [(ngModel)]="email"
+        autocomplete="email">
+      </ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-label position="floating">Contraseña</ion-label>
-    <ion-input type="password" [(ngModel)]="password"></ion-input>
-  </ion-item>
+    <ion-item class="input-group" lines="none">
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input 
+        type="password" 
+        [(ngModel)]="password"
+        autocomplete="current-password">
+      </ion-input>
+    </ion-item>
 
-  <p *ngIf="error" style="color:red">{{ error }}</p>
+    <p *ngIf="error" class="error-msg">⚠️ {{ error }}</p>
 
-  <ion-button expand="block" (click)="login()" [disabled]="loading" style="margin-top: 20px">
-    <ion-spinner *ngIf="loading"></ion-spinner>
-    <span *ngIf="!loading">Entrar</span>
-  </ion-button>
+    <ion-button 
+      expand="block" 
+      class="btn-login"
+      (click)="login()" 
+      [disabled]="loading">
+      <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+      <span *ngIf="!loading">Iniciar Sesión</span>
+    </ion-button>
+  
 </ion-content>
