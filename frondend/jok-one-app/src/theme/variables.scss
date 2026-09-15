@@ -266,13 +266,18 @@ h3 {
 // El color "light" en los botones del header (Salir, volver) está pensado
 // para leerse bien sobre CUALQUIER toolbar, pero --ion-color-light es un
 // tono fijo casi blanco: en modo claro, sobre un toolbar también claro,
-// quedaba casi invisible. --ion-toolbar-color ya es el texto correcto para
-// el toolbar en cada tema (blanco en oscuro, oscuro en claro), así que se
-// reutiliza aquí en vez del color "light" genérico.
+// quedaba casi invisible. Ionic aplica el color de un botón con color="X"
+// mediante --ion-color-base (ligado internamente a --ion-color-light) con
+// !important, así que sobreescribir --color no tiene efecto — hay que
+// redefinir --ion-color-light (y su contraste) para estos botones.
 ion-header {
   ion-button[color="light"],
   ion-back-button[color="light"] {
-    --color: var(--ion-toolbar-color);
+    --ion-color-light: var(--ion-toolbar-color);
+    --ion-color-light-rgb: var(--ion-text-color-rgb);
+    --ion-color-light-contrast: var(--ion-toolbar-background);
+    --ion-color-light-shade: var(--ion-toolbar-color);
+    --ion-color-light-tint: var(--ion-toolbar-color);
   }
 }
 

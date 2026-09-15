@@ -21,6 +21,15 @@ allprojects {
     google()
     mavenCentral()
   }
+
+  // Algunas dependencias siguen arrastrando kotlin-stdlib-jdk7/jdk8 (separados
+  // en versiones viejas de Kotlin), mientras otras ya traen kotlin-stdlib
+  // 1.8+, que integró esas clases directamente — sin esto, el build falla
+  // por clases duplicadas (checkDebugDuplicateClasses).
+  configurations.all {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+  }
 }
 
 task clean(type: Delete) {
