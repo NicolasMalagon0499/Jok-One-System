@@ -79,14 +79,21 @@ export class BarberDetailPage implements OnInit {
     return new HttpHeaders({ Authorization: `Bearer ${this.auth.getToken()}` });
   }
 selectedDate: string = ''; // ← vacío, no con fecha actual
+rangeStart: string = '';
+rangeEnd: string = '';
 
 loadEarnings() {
   let endpoint = '';
-  
+
   if (this.period === 'custom') {
     if (!this.customDate) return;
     const formattedDate = this.customDate.split('T')[0];
     endpoint = `${API}/services/daily/${this.barberId}?date=${formattedDate}`;
+  } else if (this.period === 'range') {
+    if (!this.rangeStart || !this.rangeEnd) return;
+    const startStr = this.rangeStart.split('T')[0];
+    const endStr = this.rangeEnd.split('T')[0];
+    endpoint = `${API}/services/range/${this.barberId}?startDate=${startStr}&endDate=${endStr}`;
   } else {
     endpoint = `${API}/services/${this.period}/${this.barberId}`;
   }
@@ -96,7 +103,17 @@ loadEarnings() {
     error: (err) => console.error(err)
   });
 
-  
+
+}
+
+onRangeChange() {
+  if (!this.rangeStart || !this.rangeEnd) return;
+  if (this.rangeStart.split('T')[0] > this.rangeEnd.split('T')[0]) {
+    [this.rangeStart, this.rangeEnd] = [this.rangeEnd, this.rangeStart];
+  }
+  this.loadEarnings();
+  this.filterHistoryLocally();
+  this.loadCashClose();
 }
 
  loadHistory() {
@@ -119,6 +136,14 @@ get totalAPagar() {
 
 get selectedDateLabel(): string {
   return formatLongDateEs(this.customDate);
+}
+
+get rangeStartLabel(): string {
+  return formatLongDateEs(this.rangeStart);
+}
+
+get rangeEndLabel(): string {
+  return formatLongDateEs(this.rangeEnd);
 }
 
 // Un registro del historial puede ser un corte (price > 0), una venta de
@@ -188,12 +213,19 @@ refreshAll(event: any) {
 
 
 onPeriodChange() {
-    // Si cambia a algo diferente de custom, cargamos de una vez
-    if (this.period !== 'custom') {
-      this.customDate = ''; // Limpiamos fecha personalizada si cambia a otro filtro
+    // Si cambia a algo diferente de custom/range, cargamos de una vez
+    if (this.period !== 'custom' && this.period !== 'range') {
+      this.customDate = '';
+      this.rangeStart = '';
+      this.rangeEnd = '';
       this.loadEarnings();
       this.filterHistoryLocally();
       this.loadCashClose();
+    } else if (this.period === 'custom') {
+      this.rangeStart = '';
+      this.rangeEnd = '';
+    } else if (this.period === 'range') {
+      this.customDate = '';
     }
   }
 
@@ -219,6 +251,14 @@ onPeriodChange() {
     const customStr = this.customDate.split('T')[0];
     this.history = this.allHistory.filter(s => {
       return new Date(s.createdAt).toLocaleDateString('en-CA') === customStr;
+    });
+  }
+  else if (this.period === 'range' && this.rangeStart && this.rangeEnd) {
+    const startStr = this.rangeStart.split('T')[0];
+    const endStr = this.rangeEnd.split('T')[0];
+    this.history = this.allHistory.filter(s => {
+      const d = new Date(s.createdAt).toLocaleDateString('en-CA');
+      return d >= startStr && d <= endStr;
     });
   }
   else if (this.period === 'weekly') {

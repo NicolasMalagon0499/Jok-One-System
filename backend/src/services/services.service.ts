@@ -4,6 +4,7 @@ import { ExpensesService } from '../expenses/expenses.service';
 import {
   bogotaDateKey,
   bogotaDateStringRangeUtc,
+  bogotaDateRangeUtc,
   bogotaTodayRangeUtc,
   bogotaWeekRangeUtc,
   bogotaBiweeklyRangeUtc,
@@ -486,10 +487,12 @@ export class ServicesService {
     return { barbers: result, businessSummary: this.buildBusinessSummary(result, totalExpenses) };
   }
 
-  async getEarningsByBarber(period: string, barberId: string, date?: string) {
+  async getEarningsByBarber(period: string, barberId: string, date?: string, startDate?: string, endDate?: string) {
     let start: Date, end: Date;
 
-    if (date) {
+    if (startDate && endDate) {
+      ({ start, end } = bogotaDateRangeUtc(startDate, endDate));
+    } else if (date) {
       ({ start, end } = bogotaDateStringRangeUtc(date));
     } else {
       switch (period) {
@@ -510,7 +513,7 @@ export class ServicesService {
     // Para un día específico → cálculo directo (sin garantía "de descanso" fantasma)
     // isAdmin=true: aunque el barbero vea su propio detalle por esta misma ruta,
     // esos campos extra (businessShare, etc.) simplemente no los usa su pantalla.
-    if (period === 'daily' || date) {
+    if (!startDate && (period === 'daily' || date)) {
       const gross = await this.getGrossDayEarnings(barberId, start, end, true);
       const advances = await this.prisma.cashAdvance.findMany({ where: { barberId, date: start } });
       const totalAdvances = advances.reduce((sum, a) => sum + a.amount, 0);

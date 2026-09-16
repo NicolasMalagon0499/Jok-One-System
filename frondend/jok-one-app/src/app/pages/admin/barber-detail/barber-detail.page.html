@@ -32,6 +32,7 @@
       <ion-select-option value="biweekly">🗓️ Quincena</ion-select-option>
       <ion-select-option value="monthly">📅 Mes</ion-select-option>
       <ion-select-option value="custom">🔍 Fecha Específica</ion-select-option>
+      <ion-select-option value="range">📊 Rango de Fechas</ion-select-option>
     </ion-select>
   </ion-item>
 
@@ -56,6 +57,42 @@
 
   <p class="section-subtitle" *ngIf="period === 'custom' && customDate">
     📅 Mostrando datos del {{ selectedDateLabel }}
+  </p>
+
+  <!-- Selector de Rango de Fechas (solo aparece si el período es 'range') -->
+  <ion-item *ngIf="period === 'range'">
+    <ion-label position="stacked">
+      <div class="custom-date-picker">
+        <span>Selecciona el rango</span>
+        <ion-button fill="clear" color="danger" size="small" (click)="period = 'daily'; loadEarnings()">
+          ✕ Cerrar
+        </ion-button>
+      </div>
+    </ion-label>
+  </ion-item>
+
+  <ion-item *ngIf="period === 'range'">
+    <ion-label position="stacked">Desde</ion-label>
+    <ion-datetime
+      presentation="date"
+      [(ngModel)]="rangeStart"
+      (ionChange)="onRangeChange()"
+      locale="es-ES">
+    </ion-datetime>
+  </ion-item>
+
+  <ion-item *ngIf="period === 'range'">
+    <ion-label position="stacked">Hasta</ion-label>
+    <ion-datetime
+      presentation="date"
+      [(ngModel)]="rangeEnd"
+      (ionChange)="onRangeChange()"
+      locale="es-ES">
+    </ion-datetime>
+  </ion-item>
+
+  <p class="section-subtitle" *ngIf="period === 'range' && rangeStart && rangeEnd">
+    📅 Mostrando datos del {{ rangeStartLabel }} al {{ rangeEndLabel }}
   </p>
 
   <ion-card *ngIf="earnings">

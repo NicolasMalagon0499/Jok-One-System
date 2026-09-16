@@ -59,6 +59,13 @@ export function bogotaWeekRangeUtc() {
   return { start, end };
 }
 
+/** [start, end) UTC instants spanning the Bogotá calendar days from "YYYY-MM-DD" to "YYYY-MM-DD" (inclusive). */
+export function bogotaDateRangeUtc(startDateStr: string, endDateStr: string) {
+  const { start } = bogotaDateStringRangeUtc(startDateStr);
+  const { end } = bogotaDateStringRangeUtc(endDateStr);
+  return { start, end };
+}
+
 /** [start, end) UTC instants for the current Bogotá biweekly cut (1-15 / 16-end). */
 export function bogotaBiweeklyRangeUtc() {
   const { year, month, day } = toBogotaDateParts(new Date());

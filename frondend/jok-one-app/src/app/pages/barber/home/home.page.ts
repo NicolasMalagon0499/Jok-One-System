@@ -44,10 +44,20 @@ export class HomePage implements OnInit, ViewWillEnter {
   paymentMethod = 'CASH';
   period = 'daily';
   customDate: string = '';
+  rangeStart: string = '';
+  rangeEnd: string = '';
   editingService: any = null;
 
   get selectedPeriodDateLabel(): string {
     return formatLongDateEs(this.customDate);
+  }
+
+  get rangeStartLabel(): string {
+    return formatLongDateEs(this.rangeStart);
+  }
+
+  get rangeEndLabel(): string {
+    return formatLongDateEs(this.rangeEnd);
   }
 
   get historyPeriodLabel(): string {
@@ -57,6 +67,7 @@ export class HomePage implements OnInit, ViewWillEnter {
       case 'biweekly': return 'de esta quincena';
       case 'monthly': return 'de este mes';
       case 'custom': return this.customDate ? `del ${this.selectedPeriodDateLabel}` : '';
+      case 'range': return (this.rangeStart && this.rangeEnd) ? `del ${this.rangeStartLabel} al ${this.rangeEndLabel}` : '';
       default: return '';
     }
   }
@@ -149,6 +160,11 @@ get displayedTotal() {
       if (!this.customDate) return;
       const formattedDate = this.customDate.split('T')[0];
       endpoint = `${API}/services/daily/${this.user.id}?date=${formattedDate}`;
+    } else if (this.period === 'range') {
+      if (!this.rangeStart || !this.rangeEnd) return;
+      const startStr = this.rangeStart.split('T')[0];
+      const endStr = this.rangeEnd.split('T')[0];
+      endpoint = `${API}/services/range/${this.user.id}?startDate=${startStr}&endDate=${endStr}`;
     } else if (this.period === 'daily') {
       endpoint = `${API}/services/daily/${this.user.id}`;
     }
@@ -191,6 +207,15 @@ get displayedTotal() {
       const customStr = this.customDate.split('T')[0];
       this.history = this.allHistory.filter(s => new Date(s.createdAt).toLocaleDateString('en-CA') === customStr);
     } else if (this.period === 'custom') {
+      this.history = [];
+    } else if (this.period === 'range' && this.rangeStart && this.rangeEnd) {
+      const startStr = this.rangeStart.split('T')[0];
+      const endStr = this.rangeEnd.split('T')[0];
+      this.history = this.allHistory.filter(s => {
+        const d = new Date(s.createdAt).toLocaleDateString('en-CA');
+        return d >= startStr && d <= endStr;
+      });
+    } else if (this.period === 'range') {
       this.history = [];
     } else if (this.period === 'weekly') {
       const weekStart = this.getStartOfWeek(today);
@@ -269,10 +294,17 @@ get displayedTotal() {
   }
 
   onPeriodChange() {
-    if (this.period !== 'custom') {
+    if (this.period !== 'custom' && this.period !== 'range') {
       this.customDate = '';
+      this.rangeStart = '';
+      this.rangeEnd = '';
       this.loadEarnings();
       this.filterHistoryLocally();
+    } else if (this.period === 'custom') {
+      this.rangeStart = '';
+      this.rangeEnd = '';
+    } else if (this.period === 'range') {
+      this.customDate = '';
     }
   }
 
@@ -281,6 +313,15 @@ get displayedTotal() {
       this.loadEarnings();
       this.filterHistoryLocally();
     }
+  }
+
+  onRangeChange() {
+    if (!this.rangeStart || !this.rangeEnd) return;
+    if (this.rangeStart.split('T')[0] > this.rangeEnd.split('T')[0]) {
+      [this.rangeStart, this.rangeEnd] = [this.rangeEnd, this.rangeStart];
+    }
+    this.loadEarnings();
+    this.filterHistoryLocally();
   }
 
   onPaymentMethodChange() {

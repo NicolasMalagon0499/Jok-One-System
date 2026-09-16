@@ -118,8 +118,10 @@ async getAllDailyEarnings(@Query('date') date?: string) {
   async getEarningsByBarber(
     @Param('period') period: string,
     @Param('barberId') barberId: string,
-    @Query('date') date?: string
+    @Query('date') date?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
   ) {
-    return this.servicesService.getEarningsByBarber(period, barberId, date);
+    return this.servicesService.getEarningsByBarber(period, barberId, date, startDate, endDate);
   }
 }
