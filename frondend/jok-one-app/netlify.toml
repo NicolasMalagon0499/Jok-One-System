@@ -1,0 +1,11 @@
+[build]
+  command = "npx ng build --configuration production"
+  publish = "www"
+
+# Angular usa enrutamiento del lado del cliente (rutas como /admin/dashboard
+# no existen como archivos reales) — sin esto, recargar la página en
+# cualquier ruta que no sea "/" da 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
