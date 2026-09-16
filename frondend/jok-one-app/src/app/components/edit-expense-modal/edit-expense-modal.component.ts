@@ -9,6 +9,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { environment } from '../../../environments/environment';
+import { ThousandsDirective } from '../../directives/thousands.directive';
 
 @Component({
   selector: 'app-edit-expense-modal',
@@ -16,7 +17,8 @@ import { environment } from '../../../environments/environment';
   imports: [
     CommonModule, FormsModule, IonButton, IonInput, IonItem,
     IonLabel, IonContent, IonHeader, IonToolbar, IonTitle,
-    IonButtons, IonSelect, IonSelectOption, IonTextarea
+    IonButtons, IonSelect, IonSelectOption, IonTextarea,
+    ThousandsDirective
   ],
   template: `
     <ion-header>
@@ -44,7 +46,7 @@ import { environment } from '../../../environments/environment';
 
       <ion-item>
         <ion-label position="stacked">Monto</ion-label>
-        <ion-input type="number" [(ngModel)]="expense.amount"></ion-input>
+        <ion-input type="text" inputmode="numeric" [(appThousands)]="expense.amount"></ion-input>
       </ion-item>
 
       <ion-button expand="block" (click)="save()" class="ion-margin-top">

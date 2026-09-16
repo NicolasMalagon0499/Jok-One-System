@@ -15,6 +15,7 @@ import { AuthService } from '../../../services/auth';
 import { environment } from '../../../../environments/environment';
 import { EditProductModalComponent } from '../../../components/edit-product-modal/edit-product-modal.component';
 import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
+import { ThousandsDirective } from '../../../directives/thousands.directive';
 
 const API = environment.apiUrl;
 @Component({
@@ -26,7 +27,7 @@ const API = environment.apiUrl;
     IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
     IonCardTitle, IonCardContent, IonButton, IonInput, IonItem, IonLabel,
     IonBackButton, IonButtons, IonRow, IonCol, IonIcon, IonBadge, CommonModule, FormsModule, ThemeToggleComponent,
-    IonRefresher, IonRefresherContent
+    IonRefresher, IonRefresherContent, ThousandsDirective
   ]
 })
 export class InventoryPage implements OnInit {

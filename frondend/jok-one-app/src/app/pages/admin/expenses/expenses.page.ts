@@ -35,6 +35,7 @@ import { AuthService } from '../../../services/auth';
 import { environment } from '../../../../environments/environment';
 import { EditExpenseModalComponent } from '../../../components/edit-expense-modal/edit-expense-modal.component';
 import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
+import { ThousandsDirective } from '../../../directives/thousands.directive';
 
 const API = environment.apiUrl;
 @Component({
@@ -71,7 +72,8 @@ const API = environment.apiUrl;
     IonIcon,
     ThemeToggleComponent,
     IonRefresher,
-    IonRefresherContent
+    IonRefresherContent,
+    ThousandsDirective
   ]
 })
 export class ExpensesPage implements OnInit {

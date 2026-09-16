@@ -12,6 +12,7 @@ import { EditAdvanceModalComponent } from '../../../components/edit-advance-moda
 import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
 import { environment } from '../../../../environments/environment';
 import { formatLongDateEs } from '../../../utils/format-date';
+import { ThousandsDirective } from '../../../directives/thousands.directive';
 import {
   IonContent, IonHeader, IonToolbar, IonButton, IonInput,
   IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
@@ -32,7 +33,7 @@ const API = environment.apiUrl;
     IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
     IonSelect, IonSelectOption, IonIcon, IonRow, IonCol,
     CommonModule, FormsModule, IonCardSubtitle, IonList, IonDatetime, ThemeToggleComponent,
-    IonRefresher, IonRefresherContent
+    IonRefresher, IonRefresherContent, ThousandsDirective
   ]
 })
 export class HomePage implements OnInit, ViewWillEnter {

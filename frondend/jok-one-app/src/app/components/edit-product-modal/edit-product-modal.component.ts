@@ -8,6 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { environment } from '../../../environments/environment';
+import { ThousandsDirective } from '../../directives/thousands.directive';
 
 @Component({
   selector: 'app-edit-product-modal',
@@ -15,7 +16,7 @@ import { environment } from '../../../environments/environment';
   imports: [
     CommonModule, FormsModule, IonButton, IonInput, IonItem,
     IonLabel, IonContent, IonHeader, IonToolbar, IonTitle,
-    IonButtons, IonTextarea
+    IonButtons, IonTextarea, ThousandsDirective
   ],
   template: `
     <ion-header>
@@ -54,13 +55,13 @@ import { environment } from '../../../environments/environment';
 
       <ion-item>
         <ion-label position="stacked">Precio de venta (al cliente)</ion-label>
-        <ion-input type="number" [(ngModel)]="product.salePrice"></ion-input>
+        <ion-input type="text" inputmode="numeric" [(appThousands)]="product.salePrice"></ion-input>
       </ion-item>
       <p class="field-hint">Lo que paga el cliente por unidad.</p>
 
       <ion-item>
         <ion-label position="stacked">Precio de costo (lo que pagaste)</ion-label>
-        <ion-input type="number" [(ngModel)]="product.costPrice"></ion-input>
+        <ion-input type="text" inputmode="numeric" [(appThousands)]="product.costPrice"></ion-input>
       </ion-item>
       <p class="field-hint">Lo que te cuesta comprar una unidad; define la ganancia real por producto.</p>
 

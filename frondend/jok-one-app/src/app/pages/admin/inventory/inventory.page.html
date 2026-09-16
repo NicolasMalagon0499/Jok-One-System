@@ -49,12 +49,12 @@
 
   <ion-item>
     <ion-label position="floating">Precio de venta (al cliente)</ion-label>
-    <ion-input type="number" [(ngModel)]="newProduct.salePrice"></ion-input>
+    <ion-input type="text" inputmode="numeric" [(appThousands)]="newProduct.salePrice"></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label position="floating">Precio de costo (lo que pagaste)</ion-label>
-    <ion-input type="number" [(ngModel)]="newProduct.costPrice"></ion-input>
+    <ion-input type="text" inputmode="numeric" [(appThousands)]="newProduct.costPrice"></ion-input>
   </ion-item>
 
   <ion-button expand="block" (click)="createProduct()" class="ion-margin-top">

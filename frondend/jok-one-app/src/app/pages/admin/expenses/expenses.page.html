@@ -55,7 +55,7 @@
 
   <ion-item>
     <ion-label position="floating">Monto</ion-label>
-    <ion-input type="number" [(ngModel)]="newExpense.amount"></ion-input>
+    <ion-input type="text" inputmode="numeric" [(appThousands)]="newExpense.amount"></ion-input>
   </ion-item>
 
   <ion-button expand="block" (click)="createExpense()" class="ion-margin-top">

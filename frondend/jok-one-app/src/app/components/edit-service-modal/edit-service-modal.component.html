@@ -18,22 +18,22 @@
 
   <ion-item>
     <ion-label position="stacked">Precio</ion-label>
-    <ion-input type="number" [(ngModel)]="service.price"></ion-input>
+    <ion-input type="text" inputmode="numeric" [(appThousands)]="service.price"></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label position="stacked">Propina</ion-label>
-    <ion-input type="number" [(ngModel)]="service.tip"></ion-input>
+    <ion-input type="text" inputmode="numeric" [(appThousands)]="service.tip"></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label position="stacked">Efectivo</ion-label>
-    <ion-input type="number" [(ngModel)]="service.cashAmount"></ion-input>
+    <ion-input type="text" inputmode="numeric" [(appThousands)]="service.cashAmount"></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label position="stacked">QR</ion-label>
-    <ion-input type="number" [(ngModel)]="service.qrAmount"></ion-input>
+    <ion-input type="text" inputmode="numeric" [(appThousands)]="service.qrAmount"></ion-input>
   </ion-item>
 
   <ion-item>

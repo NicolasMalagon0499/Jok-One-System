@@ -11,6 +11,7 @@ import { addIcons } from 'ionicons';
 import { addCircleOutline, removeCircleOutline } from 'ionicons/icons';
 import { AuthService } from '../../services/auth'; // Asegúrate de ajustar esta ruta
 import { environment } from '../../../environments/environment';
+import { ThousandsDirective } from '../../directives/thousands.directive';
 
 interface EditableProduct { productId: string; quantity: number; type: string }
 
@@ -20,7 +21,8 @@ interface EditableProduct { productId: string; quantity: number; type: string }
   imports: [
     CommonModule, FormsModule, IonButton, IonInput, IonItem,
     IonLabel, IonContent, IonHeader, IonToolbar, IonTitle,
-    IonButtons, IonSelect, IonSelectOption, IonIcon, IonList
+    IonButtons, IonSelect, IonSelectOption, IonIcon, IonList,
+    ThousandsDirective
   ],
   template: `
     <ion-header>
@@ -46,12 +48,12 @@ interface EditableProduct { productId: string; quantity: number; type: string }
       <ng-container *ngIf="isHaircutRecord">
         <ion-item>
           <ion-label position="stacked">Precio del corte</ion-label>
-          <ion-input type="number" [(ngModel)]="service.price"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="service.price"></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Propina</ion-label>
-          <ion-input type="number" [(ngModel)]="service.tip"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="service.tip"></ion-input>
         </ion-item>
       </ng-container>
 
@@ -141,11 +143,11 @@ interface EditableProduct { productId: string; quantity: number; type: string }
       <ng-container *ngIf="paymentMethod === 'HYBRID'">
         <ion-item>
           <ion-label position="stacked">Efectivo</ion-label>
-          <ion-input type="number" [(ngModel)]="service.cashAmount"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="service.cashAmount"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label position="stacked">QR</ion-label>
-          <ion-input type="number" [(ngModel)]="service.qrAmount"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="service.qrAmount"></ion-input>
         </ion-item>
         <p class="field-hint" [class.danger]="hybridRemaining !== 0" [class.success]="hybridRemaining === 0">
           <ng-container *ngIf="hybridRemaining > 0">Faltan {{ hybridRemaining | currency:'COP':'symbol-narrow':'1.0-0' }} por asignar.</ng-container>

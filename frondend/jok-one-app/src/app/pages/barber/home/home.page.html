@@ -150,7 +150,7 @@
         <p *ngIf="!cashClose.hasBase">Registra la base que recibiste hoy para dar vueltas.</p>
         <ion-item fill="outline" class="ion-margin-bottom">
           <ion-label position="floating">Base de hoy</ion-label>
-          <ion-input type="number" [(ngModel)]="newBaseAmount"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="newBaseAmount"></ion-input>
         </ion-item>
         <ion-button expand="block" (click)="setCashBase()">
           💵 {{ cashClose.hasBase ? 'Guardar base' : 'Confirmar base de hoy' }}
@@ -203,7 +203,7 @@
       <h4 class="section-subtitle">Registrar vale</h4>
       <ion-item fill="outline" class="ion-margin-bottom">
         <ion-label position="floating">Monto del vale</ion-label>
-        <ion-input type="number" [(ngModel)]="newAdvance.amount"></ion-input>
+        <ion-input type="text" inputmode="numeric" [(appThousands)]="newAdvance.amount"></ion-input>
       </ion-item>
       <ion-item fill="outline" class="ion-margin-bottom">
         <ion-label position="floating">Motivo (opcional)</ion-label>
@@ -255,12 +255,12 @@
 
       <ion-item fill="outline" class="ion-margin-bottom">
         <ion-label position="floating">Precio del servicio</ion-label>
-        <ion-input type="number" [(ngModel)]="service.price"></ion-input>
+        <ion-input type="text" inputmode="numeric" [(appThousands)]="service.price"></ion-input>
       </ion-item>
 
       <ion-item fill="outline" class="ion-margin-bottom">
         <ion-label position="floating">Propina</ion-label>
-        <ion-input type="number" [(ngModel)]="service.tip"></ion-input>
+        <ion-input type="text" inputmode="numeric" [(appThousands)]="service.tip"></ion-input>
       </ion-item>
 
       <ion-item fill="outline" class="ion-margin-top">
@@ -275,11 +275,11 @@
       <ng-container *ngIf="paymentMethod === 'HYBRID'">
         <ion-item fill="outline" class="ion-margin-bottom ion-margin-top">
           <ion-label position="floating">Efectivo recibido</ion-label>
-          <ion-input type="number" [(ngModel)]="service.cashAmount"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="service.cashAmount"></ion-input>
         </ion-item>
         <ion-item fill="outline" class="ion-margin-bottom">
           <ion-label position="floating">QR recibido</ion-label>
-          <ion-input type="number" [(ngModel)]="service.qrAmount"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="service.qrAmount"></ion-input>
         </ion-item>
         <p class="field-hint" [class.danger]="hybridRemaining !== 0" [class.success]="hybridRemaining === 0">
           <ng-container *ngIf="hybridRemaining > 0">Faltan {{ hybridRemaining | currency:'COP':'symbol-narrow':'1.0-0' }} por asignar.</ng-container>
@@ -398,11 +398,11 @@
       <ng-container *ngIf="salePaymentMethod === 'HYBRID'">
         <ion-item fill="outline" class="ion-margin-bottom ion-margin-top">
           <ion-label position="floating">Efectivo recibido</ion-label>
-          <ion-input type="number" [(ngModel)]="productSale.cashAmount"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="productSale.cashAmount"></ion-input>
         </ion-item>
         <ion-item fill="outline" class="ion-margin-bottom">
           <ion-label position="floating">QR recibido</ion-label>
-          <ion-input type="number" [(ngModel)]="productSale.qrAmount"></ion-input>
+          <ion-input type="text" inputmode="numeric" [(appThousands)]="productSale.qrAmount"></ion-input>
         </ion-item>
         <p class="field-hint" [class.danger]="saleHybridRemaining !== 0" [class.success]="saleHybridRemaining === 0">
           <ng-container *ngIf="saleHybridRemaining > 0">Faltan {{ saleHybridRemaining | currency:'COP':'symbol-narrow':'1.0-0' }} por asignar.</ng-container>

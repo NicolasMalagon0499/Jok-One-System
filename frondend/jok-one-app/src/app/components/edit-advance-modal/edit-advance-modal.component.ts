@@ -8,13 +8,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { environment } from '../../../environments/environment';
+import { ThousandsDirective } from '../../directives/thousands.directive';
 
 @Component({
   selector: 'app-edit-advance-modal',
   standalone: true,
   imports: [
     CommonModule, FormsModule, IonButton, IonInput, IonItem,
-    IonLabel, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons
+    IonLabel, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons,
+    ThousandsDirective
   ],
   template: `
     <ion-header>
@@ -29,7 +31,7 @@ import { environment } from '../../../environments/environment';
     <ion-content class="ion-padding">
       <ion-item>
         <ion-label position="stacked">Monto</ion-label>
-        <ion-input type="number" [(ngModel)]="advance.amount"></ion-input>
+        <ion-input type="text" inputmode="numeric" [(appThousands)]="advance.amount"></ion-input>
       </ion-item>
 
       <ion-item>
