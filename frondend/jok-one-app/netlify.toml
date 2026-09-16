@@ -1,6 +1,9 @@
 [build]
-  command = "npx ng build --configuration production"
-  publish = "www"
+  # Netlify ejecuta este comando desde la raíz del repo (no desde donde
+  # vive este netlify.toml), así que hay que entrar a la carpeta del
+  # frontend e instalar dependencias ahí explícitamente.
+  command = "cd frondend/jok-one-app && npm install && npx ng build --configuration production"
+  publish = "frondend/jok-one-app/www"
 
 # Angular usa enrutamiento del lado del cliente (rutas como /admin/dashboard
 # no existen como archivos reales) — sin esto, recargar la página en
