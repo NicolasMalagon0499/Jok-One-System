@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption, IonBadge, IonDatetime } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption, IonBadge, IonDatetime, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { AuthService } from '../../../services/auth';
 import { environment } from '../../../../environments/environment';
 import { formatLongDateEs } from '../../../utils/format-date';
@@ -19,7 +19,8 @@ const API = environment.apiUrl;
   imports: [
     IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
     IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect,
-    IonSelectOption, IonBadge, IonDatetime, CommonModule, FormsModule, ThemeToggleComponent
+    IonSelectOption, IonBadge, IonDatetime, CommonModule, FormsModule, ThemeToggleComponent,
+    IonRefresher, IonRefresherContent
   ]
 })
 export class DashboardPage implements OnInit {
@@ -80,6 +81,13 @@ export class DashboardPage implements OnInit {
       next: (res) => this.allBarbers = res,
       error: () => console.error('Error cargando barberos')
     });
+  }
+
+  refreshAll(event: any) {
+    this.loadEarnings();
+    this.loadAllBarbers();
+    this.loadLowStock();
+    setTimeout(() => event.target.complete(), 500);
   }
 
   loadLowStock() {

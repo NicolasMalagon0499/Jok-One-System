@@ -24,7 +24,9 @@ import {
   IonRow,
   IonCol,
   IonIcon,
-  ModalController
+  ModalController,
+  IonRefresher,
+  IonRefresherContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
@@ -67,7 +69,9 @@ const API = environment.apiUrl;
     IonRow,
     IonCol,
     IonIcon,
-    ThemeToggleComponent
+    ThemeToggleComponent,
+    IonRefresher,
+    IonRefresherContent
   ]
 })
 export class ExpensesPage implements OnInit {
@@ -126,6 +130,11 @@ export class ExpensesPage implements OnInit {
         console.error('Error cargando gastos', err);
       }
     });
+  }
+
+  refreshAll(event: any) {
+    this.loadExpenses();
+    setTimeout(() => event.target.complete(), 500);
   }
 
   getCategoryLabel(value: string) {

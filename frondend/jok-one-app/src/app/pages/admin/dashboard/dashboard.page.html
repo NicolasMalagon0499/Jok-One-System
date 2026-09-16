@@ -16,6 +16,9 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refreshAll($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
   <ion-card color="warning" *ngIf="lowStockProducts.length > 0">
     <ion-card-header>

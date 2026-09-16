@@ -16,7 +16,8 @@ import {
   IonContent, IonHeader, IonToolbar, IonButton, IonInput,
   IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
   IonSelect, IonSelectOption, IonIcon, IonRow, IonCol,
-  IonCardSubtitle, IonList, IonDatetime, ModalController, ViewWillEnter
+  IonCardSubtitle, IonList, IonDatetime, ModalController, ViewWillEnter,
+  IonRefresher, IonRefresherContent
 } from '@ionic/angular/standalone';
 
 const API = environment.apiUrl;
@@ -30,7 +31,8 @@ const API = environment.apiUrl;
     IonContent, IonHeader, IonToolbar, IonButton, IonInput,
     IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
     IonSelect, IonSelectOption, IonIcon, IonRow, IonCol,
-    CommonModule, FormsModule, IonCardSubtitle, IonList, IonDatetime, ThemeToggleComponent
+    CommonModule, FormsModule, IonCardSubtitle, IonList, IonDatetime, ThemeToggleComponent,
+    IonRefresher, IonRefresherContent
   ]
 })
 export class HomePage implements OnInit, ViewWillEnter {
@@ -128,6 +130,16 @@ get displayedTotal() {
       next: (res) => this.products = res,
       error: () => console.error('Error cargando productos')
     });
+  }
+
+  // Deslizar hacia abajo para recargar todo lo que se ve en la pantalla.
+  refreshAll(event: any) {
+    this.loadEarnings();
+    this.loadHistory();
+    this.loadProducts();
+    this.loadCashClose();
+    this.loadGuaranteeStatus();
+    setTimeout(() => event.target.complete(), 500);
   }
 
   loadEarnings() {

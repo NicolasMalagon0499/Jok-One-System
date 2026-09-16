@@ -7,7 +7,7 @@ import {
   IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
   IonCardTitle, IonCardContent, IonButton, IonBackButton, IonButtons,
   IonItem, IonLabel, IonSelect, IonSelectOption, IonIcon,
-  IonDatetime, ModalController,
+  IonDatetime, ModalController, IonRefresher, IonRefresherContent,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
@@ -26,7 +26,7 @@ const API = environment.apiUrl;
     IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
     IonCardTitle, IonCardContent, IonButton, IonBackButton, IonButtons,
     IonItem, IonLabel, IonSelect, IonSelectOption, IonIcon, CommonModule, FormsModule,
-    IonDatetime, ThemeToggleComponent,
+    IonDatetime, ThemeToggleComponent, IonRefresher, IonRefresherContent,
   ]
 })
 export class BarberDetailPage implements OnInit {
@@ -177,6 +177,13 @@ loadCashClose() {
     next: (res) => this.cashClose = res,
     error: () => this.cashClose = null
   });
+}
+
+refreshAll(event: any) {
+  this.loadEarnings();
+  this.loadHistory();
+  this.loadCashClose();
+  setTimeout(() => event.target.complete(), 500);
 }
 
 

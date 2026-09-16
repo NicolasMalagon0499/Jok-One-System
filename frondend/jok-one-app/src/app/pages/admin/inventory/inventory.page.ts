@@ -6,7 +6,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
   IonCardTitle, IonCardContent, IonButton, IonInput, IonItem, IonLabel,
-  IonBackButton, IonButtons, IonRow, IonCol, IonIcon, IonBadge, AlertController, ModalController
+  IonBackButton, IonButtons, IonRow, IonCol, IonIcon, IonBadge, AlertController, ModalController,
+  IonRefresher, IonRefresherContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
@@ -24,7 +25,8 @@ const API = environment.apiUrl;
   imports: [
     IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
     IonCardTitle, IonCardContent, IonButton, IonInput, IonItem, IonLabel,
-    IonBackButton, IonButtons, IonRow, IonCol, IonIcon, IonBadge, CommonModule, FormsModule, ThemeToggleComponent
+    IonBackButton, IonButtons, IonRow, IonCol, IonIcon, IonBadge, CommonModule, FormsModule, ThemeToggleComponent,
+    IonRefresher, IonRefresherContent
   ]
 })
 export class InventoryPage implements OnInit {
@@ -64,6 +66,11 @@ export class InventoryPage implements OnInit {
       next: (res) => this.products = res,
       error: () => console.error('Error cargando productos')
     });
+  }
+
+  refreshAll(event: any) {
+    this.loadProducts();
+    setTimeout(() => event.target.complete(), 500);
   }
 
   createProduct() {
