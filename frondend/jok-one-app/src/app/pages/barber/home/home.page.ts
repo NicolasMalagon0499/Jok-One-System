@@ -8,6 +8,7 @@ import { AuthService } from '../../../services/auth';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline, addCircleOutline, removeCircleOutline } from 'ionicons/icons';
 import { EditServiceModalComponent } from '../../../components/edit-service-modal/edit-service-modal.component';
+import { EditAdvanceModalComponent } from '../../../components/edit-advance-modal/edit-advance-modal.component';
 import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
 import { environment } from '../../../../environments/environment';
 import { formatLongDateEs } from '../../../utils/format-date';
@@ -336,6 +337,18 @@ get displayedTotal() {
       next: () => this.loadCashClose(),
       error: () => alert('No se pudo eliminar el vale')
     });
+  }
+
+  async editCashAdvance(advance: any) {
+    const modal = await this.modalCtrl.create({
+      component: EditAdvanceModalComponent,
+      componentProps: { advance: { id: advance.id, amount: advance.amount, note: advance.note } }
+    });
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data?.updated) {
+      this.loadCashClose();
+    }
   }
 
   setProductOnlyMode(value: boolean) {

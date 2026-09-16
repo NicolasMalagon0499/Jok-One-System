@@ -172,6 +172,9 @@
             {{ a.amount | currency:'COP':'symbol-narrow':'1.0-0' }}
             <span *ngIf="a.note"> — {{ a.note }}</span>
           </ion-label>
+          <ion-button slot="end" fill="clear" (click)="editCashAdvance(a)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
           <ion-button slot="end" fill="clear" color="danger" (click)="removeCashAdvance(a.id)">
             <ion-icon name="trash"></ion-icon>
           </ion-button>

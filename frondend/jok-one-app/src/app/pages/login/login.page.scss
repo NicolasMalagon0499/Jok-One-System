@@ -9,30 +9,11 @@ ion-header {
     --background: var(--ion-toolbar-background);
     --border-color: transparent;
     box-shadow: none;
-    --padding-start: 16px;
-    --padding-end: 16px;
-    position: relative;
   }
 }
 
-.login-theme-toggle {
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-}
-
-.logo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
 .topbar-logo {
-  height: 100px;
-  width: auto;
-  object-fit: contain;
+  height: 60px;
 }
 
 .login-title {

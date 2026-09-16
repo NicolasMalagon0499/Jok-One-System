@@ -62,6 +62,16 @@ export class ServicesController {
     return this.servicesService.deleteCashAdvance(id);
   }
 
+  @Patch('cash-advance/:id')
+  @Roles('ADMIN', 'BARBER')
+  async updateCashAdvance(
+    @Param('id') id: string,
+    @Body('amount') amount: number,
+    @Body('note') note?: string
+  ) {
+    return this.servicesService.updateCashAdvance(id, amount, note);
+  }
+
   @Get('cash-close/:barberId')
   @Roles('ADMIN', 'BARBER')
   async getCashClose(@Param('barberId') barberId: string, @Query('date') date?: string) {

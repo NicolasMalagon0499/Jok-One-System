@@ -6,13 +6,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
   IonCardTitle, IonCardContent, IonButton, IonBackButton, IonButtons,
-  IonItem, IonLabel, IonSelect, IonSelectOption,
-  IonDatetime,
+  IonItem, IonLabel, IonSelect, IonSelectOption, IonIcon,
+  IonDatetime, ModalController,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { createOutline, trashOutline } from 'ionicons/icons';
 import { AuthService } from '../../../services/auth';
 import { environment } from '../../../../environments/environment';
 import { formatLongDateEs } from '../../../utils/format-date';
 import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
+import { EditAdvanceModalComponent } from '../../../components/edit-advance-modal/edit-advance-modal.component';
 
 const API = environment.apiUrl;
 @Component({
@@ -22,7 +25,7 @@ const API = environment.apiUrl;
   imports: [
     IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
     IonCardTitle, IonCardContent, IonButton, IonBackButton, IonButtons,
-    IonItem, IonLabel, IonSelect, IonSelectOption, CommonModule, FormsModule,
+    IonItem, IonLabel, IonSelect, IonSelectOption, IonIcon, CommonModule, FormsModule,
     IonDatetime, ThemeToggleComponent,
   ]
 })
@@ -36,8 +39,13 @@ export class BarberDetailPage implements OnInit {
   history: any[] = [];
   customDate: string = '';
   isAdmin: boolean = true;
-  //businessShare 
-  constructor(private route: ActivatedRoute, private auth: AuthService, private http: HttpClient) {}
+  //businessShare
+  constructor(
+    private route: ActivatedRoute, private auth: AuthService, private http: HttpClient,
+    private modalCtrl: ModalController
+  ) {
+    addIcons({ createOutline, trashOutline });
+  }
 
   ngOnInit() {
     this.barberId = this.route.snapshot.paramMap.get('barberId') || '';
@@ -45,6 +53,26 @@ export class BarberDetailPage implements OnInit {
     this.loadEarnings();
     this.loadHistory();
     this.loadCashClose();
+  }
+
+  async editCashAdvance(advance: any) {
+    const modal = await this.modalCtrl.create({
+      component: EditAdvanceModalComponent,
+      componentProps: { advance: { id: advance.id, amount: advance.amount, note: advance.note } }
+    });
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data?.updated) {
+      this.loadCashClose();
+    }
+  }
+
+  removeCashAdvance(id: string) {
+    if (!confirm('¿Eliminar este vale?')) return;
+    this.http.delete(`${API}/services/cash-advance/${id}`, { headers: this.getHeaders() }).subscribe({
+      next: () => this.loadCashClose(),
+      error: () => alert('No se pudo eliminar el vale')
+    });
   }
 
   getHeaders() {

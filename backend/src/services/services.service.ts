@@ -365,6 +365,16 @@ export class ServicesService {
     return this.prisma.cashAdvance.delete({ where: { id } });
   }
 
+  async updateCashAdvance(id: string, amount: number, note?: string) {
+    if (!amount || Number(amount) <= 0) {
+      throw new BadRequestException('El monto del vale debe ser mayor a 0.');
+    }
+    return this.prisma.cashAdvance.update({
+      where: { id },
+      data: { amount: Number(amount), note }
+    });
+  }
+
   /** Ganancia bruta de un barbero para un único día puntual (servicios, o la garantía si no hubo ninguno). */
   private async getGrossDayEarnings(barberId: string, start: Date, end: Date, isAdmin: boolean = false) {
     const services = await this.prisma.service.findMany({

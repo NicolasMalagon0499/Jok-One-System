@@ -172,9 +172,17 @@
 
       <ng-container *ngIf="cashClose.advances?.length > 0">
         <p class="section-subtitle">Vales del día</p>
-        <p *ngFor="let a of cashClose.advances">
-          • {{ a.amount | currency:'COP':'symbol-narrow':'1.0-0' }}<span *ngIf="a.note"> — {{ a.note }}</span>
-        </p>
+        <div class="stat-row" *ngFor="let a of cashClose.advances">
+          <span class="stat-label">{{ a.amount | currency:'COP':'symbol-narrow':'1.0-0' }}<span *ngIf="a.note"> — {{ a.note }}</span></span>
+          <span>
+            <ion-button fill="clear" size="small" (click)="editCashAdvance(a)">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" color="danger" (click)="removeCashAdvance(a.id)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </span>
+        </div>
       </ng-container>
     </ion-card-content>
   </ion-card>
