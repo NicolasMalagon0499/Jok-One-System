@@ -107,21 +107,29 @@
   <h3>Caja del día</h3>
   <ion-card>
     <ion-card-content>
-      <ng-container *ngIf="!cashClose.hasBase">
-        <p>Registra la base que recibiste hoy para dar vueltas.</p>
+      <ng-container *ngIf="!cashClose.hasBase || editingBase">
+        <p *ngIf="!cashClose.hasBase">Registra la base que recibiste hoy para dar vueltas.</p>
         <ion-item fill="outline" class="ion-margin-bottom">
           <ion-label position="floating">Base de hoy</ion-label>
           <ion-input type="number" [(ngModel)]="newBaseAmount"></ion-input>
         </ion-item>
         <ion-button expand="block" (click)="setCashBase()">
-          💵 Confirmar base de hoy
+          💵 {{ cashClose.hasBase ? 'Guardar base' : 'Confirmar base de hoy' }}
+        </ion-button>
+        <ion-button *ngIf="cashClose.hasBase" expand="block" fill="clear" (click)="editingBase = false">
+          Cancelar
         </ion-button>
       </ng-container>
 
-      <ng-container *ngIf="cashClose.hasBase">
+      <ng-container *ngIf="cashClose.hasBase && !editingBase">
         <div class="stat-row">
           <span class="stat-label">💵 Base de hoy</span>
-          <span class="stat-value">{{ cashClose.base | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+          <span>
+            <span class="stat-value">{{ cashClose.base | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+            <ion-button fill="clear" size="small" (click)="startEditBase()">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+          </span>
         </div>
         <div class="stat-row">
           <span class="stat-label">🧾 Efectivo cobrado</span>
@@ -176,7 +184,7 @@
             <ion-icon name="create-outline"></ion-icon>
           </ion-button>
           <ion-button slot="end" fill="clear" color="danger" (click)="removeCashAdvance(a.id)">
-            <ion-icon name="trash"></ion-icon>
+            <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
         </ion-item>
       </ion-list>

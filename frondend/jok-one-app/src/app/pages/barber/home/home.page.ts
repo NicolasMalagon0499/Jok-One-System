@@ -69,6 +69,7 @@ export class HomePage implements OnInit, ViewWillEnter {
     advances: [] as any[], expectedCash: 0, grossEarned: 0, netToPay: 0
   };
   newBaseAmount = 50000;
+  editingBase = false;
   newAdvance = { amount: 0, note: '' };
 
   // El corte de pelo es puramente el servicio (precio + propina); ya no
@@ -312,9 +313,17 @@ get displayedTotal() {
       return;
     }
     this.http.post<any>(`${API}/services/cash-base/${this.user.id}`, { amount: this.newBaseAmount }, { headers: this.getHeaders() }).subscribe({
-      next: () => this.loadCashClose(),
+      next: () => {
+        this.editingBase = false;
+        this.loadCashClose();
+      },
       error: () => alert('No se pudo registrar la base de hoy')
     });
+  }
+
+  startEditBase() {
+    this.newBaseAmount = this.cashClose.base;
+    this.editingBase = true;
   }
 
   addCashAdvance() {
