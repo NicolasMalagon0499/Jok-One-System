@@ -1,0 +1,24 @@
+ion-toolbar {
+  --background: var(--ion-toolbar-background);
+  --border-color: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.header-wrapper {
+  height: 64px;
+}
+
+.header-start {
+  padding-left: 8px;
+}
+
+.topbar-logo {
+  height: 48px !important;
+  width: auto;
+  object-fit: contain;
+}
+
+.deposited-card {
+  border-left: 3px solid var(--ion-color-success);
+}

@@ -1,0 +1,123 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-wrapper">
+      <div class="header-start">
+        <ion-buttons>
+          <ion-back-button defaultHref="/admin/dashboard" color="light"></ion-back-button>
+        </ion-buttons>
+      </div>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="Jok One" class="topbar-logo">
+      </div>
+      <div class="header-end">
+        <app-theme-toggle></app-theme-toggle>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshAll($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <h3>Cierre de caja</h3>
+
+  <ion-item>
+    <ion-label position="stacked">Desde</ion-label>
+    <ion-datetime
+      presentation="date"
+      [(ngModel)]="rangeStart"
+      (ionChange)="onRangeChange()"
+      locale="es-ES">
+    </ion-datetime>
+  </ion-item>
+
+  <ion-item class="ion-margin-bottom">
+    <ion-label position="stacked">Hasta</ion-label>
+    <ion-datetime
+      presentation="date"
+      [(ngModel)]="rangeEnd"
+      (ionChange)="onRangeChange()"
+      locale="es-ES">
+    </ion-datetime>
+  </ion-item>
+
+  <p class="section-subtitle" *ngIf="rangeStart && rangeEnd">
+    📅 {{ rangeStartLabel }} al {{ rangeEndLabel }}
+  </p>
+
+  <ion-card>
+    <ion-card-content>
+      <div class="stat-row">
+        <span class="stat-label">✅ Ya consignado en el período</span>
+        <span class="stat-value success">{{ totalDeposited | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="stat-total">
+        <span>⏳ Pendiente por consignar</span>
+        <span class="stat-value" [ngClass]="totalPending > 0 ? 'warning' : 'success'">{{ totalPending | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <h4 class="section-subtitle">Día por día</h4>
+
+  <ion-card *ngFor="let day of days" [class.deposited-card]="day.isDeposited">
+    <ion-card-content>
+      <div class="stat-row">
+        <span class="stat-label">📅 {{ dateLabel(day.date) }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💵 Efectivo esperado</span>
+        <span class="stat-value">{{ day.expectedCash | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+      </div>
+
+      <ng-container *ngIf="day.isDeposited">
+        <div class="stat-row">
+          <span class="stat-label">🏦 Consignado</span>
+          <span class="stat-value success">{{ day.depositedAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="stat-row" *ngIf="day.difference !== 0">
+          <span class="stat-label">⚠️ Diferencia</span>
+          <span class="stat-value" [ngClass]="day.difference > 0 ? 'success' : 'danger'">
+            {{ (day.difference > 0 ? '+' : '') }}{{ day.difference | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </span>
+        </div>
+        <p *ngIf="day.note" class="muted">📝 {{ day.note }}</p>
+        <ion-button expand="block" fill="clear" color="danger" size="small" (click)="undoDeposit(day.date)">
+          <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+          Deshacer consignación
+        </ion-button>
+      </ng-container>
+
+      <ng-container *ngIf="!day.isDeposited">
+        <ng-container *ngIf="depositingDate !== day.date">
+          <ion-button expand="block" fill="outline" color="success" size="small" (click)="startDeposit(day)">
+            <ion-icon slot="start" name="cash-outline"></ion-icon>
+            Marcar como consignado
+          </ion-button>
+        </ng-container>
+
+        <ng-container *ngIf="depositingDate === day.date">
+          <ion-item fill="outline" class="ion-margin-top">
+            <ion-label position="stacked">Monto consignado</ion-label>
+            <ion-input type="text" inputmode="numeric" [(appThousands)]="depositForm.amount"></ion-input>
+          </ion-item>
+          <ion-item fill="outline" class="ion-margin-bottom ion-margin-top">
+            <ion-label position="stacked">Nota (opcional)</ion-label>
+            <ion-input type="text" [(ngModel)]="depositForm.note"></ion-input>
+          </ion-item>
+          <ion-button expand="block" color="success" size="small" (click)="confirmDeposit(day.date)">
+            <ion-icon slot="start" name="checkmark-circle"></ion-icon>
+            Confirmar
+          </ion-button>
+          <ion-button expand="block" fill="clear" size="small" (click)="cancelDeposit()">
+            Cancelar
+          </ion-button>
+        </ng-container>
+      </ng-container>
+    </ion-card-content>
+  </ion-card>
+
+  <p *ngIf="!loading && days.length === 0" class="muted">No hay días en este rango.</p>
+</ion-content>

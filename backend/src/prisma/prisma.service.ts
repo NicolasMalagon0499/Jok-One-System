@@ -61,4 +61,8 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get cashAdvance() {
     return this.prisma.cashAdvance;
   }
+
+  get cashDeposit() {
+    return this.prisma.cashDeposit;
+  }
 }

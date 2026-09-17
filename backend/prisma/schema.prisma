@@ -93,6 +93,20 @@ model CashAdvance {
   barber   User   @relation(fields: [barberId], references: [id])
 }
 
+// Consignación del efectivo del negocio (todos los barberos juntos) para un
+// día puntual. El admin la marca "día vencido" (el efectivo de ayer se
+// consigna hoy), por eso queda separada de CashBase/CashAdvance en vez de
+// calcularse sola: necesita guardar cuánto se consignó realmente para poder
+// detectar diferencias contra lo esperado.
+model CashDeposit {
+  id              String    @id @default(uuid())
+  date            DateTime  @unique
+  depositedAmount Float
+  note            String?
+  depositedAt     DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+}
+
 model Product {
   id          String   @id @default(uuid())
   name        String
