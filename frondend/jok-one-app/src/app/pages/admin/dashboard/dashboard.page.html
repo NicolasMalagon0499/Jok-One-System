@@ -1,7 +1,12 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <div class="header-wrapper">
-      <div class="header-start"></div>
+      <div class="header-start">
+        <ion-button fill="clear" color="light" class="btn-bell" (click)="toggleActivityPanel()">
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+          <ion-badge *ngIf="unseenCount > 0" color="danger" class="bell-badge">{{ unseenCount }}</ion-badge>
+        </ion-button>
+      </div>
       <div class="logo-container">
         <img src="assets/logo.png" alt="Jok One" class="topbar-logo">
       </div>
@@ -19,6 +24,23 @@
   <ion-refresher slot="fixed" (ionRefresh)="refreshAll($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
+  <ion-card *ngIf="showActivityPanel" color="dark">
+    <ion-card-header>
+      <ion-card-title>🔔 Actividad reciente</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngIf="recentActivity.length === 0" class="muted">Sin actividad reciente.</p>
+      <div class="stat-row" *ngFor="let a of recentActivity">
+        <span class="stat-label">
+          {{ a.isHaircut ? '💈' : '🧴' }} {{ a.barberName }}
+          <span *ngIf="a.isHaircut"> — corte {{ a.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+          <span *ngIf="!a.isHaircut && a.productCount > 0"> — {{ a.productCount }} producto(s)</span>
+        </span>
+        <span class="stat-value">{{ a.createdAt | date:'short' }}</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
   <ion-card color="warning" *ngIf="lowStockProducts.length > 0">
     <ion-card-header>

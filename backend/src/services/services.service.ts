@@ -440,6 +440,25 @@ export class ServicesService {
     return { barbers: result, businessSummary: this.buildBusinessSummary(result, totalExpenses) };
   }
 
+  /** Actividad reciente de todos los barberos (para la campanita del admin). */
+  async getRecentActivity(limit = 30) {
+    const services = await this.prisma.service.findMany({
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: { barber: { select: { name: true } }, products: { include: { product: true } } }
+    });
+
+    return services.map(s => ({
+      id: s.id,
+      barberName: s.barber?.name || 'Sin nombre',
+      price: s.price,
+      tip: s.tip,
+      isHaircut: s.price > 0,
+      productCount: s.products?.length || 0,
+      createdAt: s.createdAt
+    }));
+  }
+
   async getWeeklyEarnings(barberId?: string) {
     const { start, end } = bogotaWeekRangeUtc();
 

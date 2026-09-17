@@ -109,6 +109,12 @@ async getAllDailyEarnings(@Query('date') date?: string) {
     return this.servicesService.getRangeEarnings(startDate, endDate);
   }
 
+  @Get('recent-activity')
+  @Roles('ADMIN')
+  async getRecentActivity(@Query('limit') limit?: string) {
+    return this.servicesService.getRecentActivity(limit ? Number(limit) : 30);
+  }
+
   @Get('history/:barberId')
   @Roles('ADMIN', 'BARBER')
   async getServiceHistory(

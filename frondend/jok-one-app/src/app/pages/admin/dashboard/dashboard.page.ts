@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption, IonBadge, IonDatetime, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption, IonBadge, IonDatetime, IonIcon, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { notificationsOutline } from 'ionicons/icons';
 import { AuthService } from '../../../services/auth';
 import { environment } from '../../../../environments/environment';
 import { formatLongDateEs } from '../../../utils/format-date';
@@ -19,7 +21,7 @@ const API = environment.apiUrl;
   imports: [
     IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader,
     IonCardTitle, IonCardContent, IonButton, IonItem, IonLabel, IonSelect,
-    IonSelectOption, IonBadge, IonDatetime, CommonModule, FormsModule, ThemeToggleComponent,
+    IonSelectOption, IonBadge, IonDatetime, IonIcon, CommonModule, FormsModule, ThemeToggleComponent,
     IonRefresher, IonRefresherContent
   ]
 })
@@ -54,12 +56,41 @@ export class DashboardPage implements OnInit {
     return this.period === 'monthly';
   }
 
-  constructor(private auth: AuthService, private http: HttpClient, public router: Router) {}
+  recentActivity: any[] = [];
+  showActivityPanel = false;
+  unseenCount = 0;
+  private static readonly LAST_SEEN_KEY = 'admin_activity_last_seen';
+
+  constructor(private auth: AuthService, private http: HttpClient, public router: Router) {
+    addIcons({ notificationsOutline });
+  }
 
   ngOnInit() {
     this.loadEarnings();
     this.loadAllBarbers();
     this.loadLowStock();
+    this.loadRecentActivity();
+  }
+
+  loadRecentActivity() {
+    this.http.get<any[]>(`${API}/services/recent-activity`, { headers: this.getHeaders() }).subscribe({
+      next: (res) => {
+        this.recentActivity = res || [];
+        const lastSeen = localStorage.getItem(DashboardPage.LAST_SEEN_KEY);
+        this.unseenCount = lastSeen
+          ? this.recentActivity.filter(a => new Date(a.createdAt) > new Date(lastSeen)).length
+          : this.recentActivity.length;
+      },
+      error: () => console.error('Error cargando actividad reciente')
+    });
+  }
+
+  toggleActivityPanel() {
+    this.showActivityPanel = !this.showActivityPanel;
+    if (this.showActivityPanel) {
+      localStorage.setItem(DashboardPage.LAST_SEEN_KEY, new Date().toISOString());
+      this.unseenCount = 0;
+    }
   }
 
   getHeaders() {
@@ -101,6 +132,7 @@ export class DashboardPage implements OnInit {
     this.loadEarnings();
     this.loadAllBarbers();
     this.loadLowStock();
+    this.loadRecentActivity();
     setTimeout(() => event.target.complete(), 500);
   }
 
