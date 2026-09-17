@@ -31,9 +31,19 @@ export class DashboardPage implements OnInit {
   lowStockProducts: any[] = [];
   period = 'monthly';
   customDate: string = ''; // 📅 Variable para almacenar la fecha específica seleccionada
+  rangeStart: string = '';
+  rangeEnd: string = '';
 
   get selectedDateLabel(): string {
     return formatLongDateEs(this.customDate);
+  }
+
+  get rangeStartLabel(): string {
+    return formatLongDateEs(this.rangeStart);
+  }
+
+  get rangeEndLabel(): string {
+    return formatLongDateEs(this.rangeEnd);
   }
 
   // Los gastos (arriendo, servicios, etc.) se registran con cadencia mensual,
@@ -65,6 +75,10 @@ export class DashboardPage implements OnInit {
     const formattedDate = this.customDate.split('T')[0];
     endpoint = `${API}/services/daily`; // ← usa daily con fecha
     params = params.set('date', formattedDate);
+  } else if (this.period === 'range') {
+    if (!this.rangeStart || !this.rangeEnd) return;
+    endpoint = `${API}/services/range`;
+    params = params.set('startDate', this.rangeStart.split('T')[0]).set('endDate', this.rangeEnd.split('T')[0]);
   }
 
   this.http.get<any>(endpoint, { headers: this.getHeaders(), params }).subscribe({
@@ -98,10 +112,17 @@ export class DashboardPage implements OnInit {
   }
 
   onPeriodChange() {
-    // Si cambia a algo diferente de custom, cargamos de una vez
-    if (this.period !== 'custom') {
-      this.customDate = ''; // Limpiamos fecha personalizada si cambia a otro filtro
+    // Si cambia a algo diferente de custom/range, cargamos de una vez
+    if (this.period !== 'custom' && this.period !== 'range') {
+      this.customDate = '';
+      this.rangeStart = '';
+      this.rangeEnd = '';
       this.loadEarnings();
+    } else if (this.period === 'custom') {
+      this.rangeStart = '';
+      this.rangeEnd = '';
+    } else if (this.period === 'range') {
+      this.customDate = '';
     }
   }
 
@@ -110,6 +131,14 @@ export class DashboardPage implements OnInit {
     if (this.customDate) {
       this.loadEarnings();
     }
+  }
+
+  onRangeChange() {
+    if (!this.rangeStart || !this.rangeEnd) return;
+    if (this.rangeStart.split('T')[0] > this.rangeEnd.split('T')[0]) {
+      [this.rangeStart, this.rangeEnd] = [this.rangeEnd, this.rangeStart];
+    }
+    this.loadEarnings();
   }
 
   getBarberEarnings(barberId: string) {

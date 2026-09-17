@@ -103,6 +103,12 @@ async getAllDailyEarnings(@Query('date') date?: string) {
     return this.servicesService.getMonthlyEarnings();
   }
 
+  @Get('range')
+  @Roles('ADMIN')
+  async getRangeEarnings(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
+    return this.servicesService.getRangeEarnings(startDate, endDate);
+  }
+
   @Get('history/:barberId')
   @Roles('ADMIN', 'BARBER')
   async getServiceHistory(

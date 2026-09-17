@@ -334,11 +334,12 @@ export class ServicesService {
   /** Estado de hoy para decidir si mostrar el botón de garantía en el frontend. */
   async getGuaranteeStatus(barberId: string) {
     const { start, end } = bogotaTodayRangeUtc();
-    const [servicesToday, claim] = await Promise.all([
+    const [barber, servicesToday, claim] = await Promise.all([
+      this.prisma.user.findUnique({ where: { id: barberId }, select: { hasGuarantee: true } }),
       this.prisma.service.count({ where: { barberId, createdAt: { gte: start, lt: end } } }),
       this.prisma.guaranteeDay.findUnique({ where: { barberId_date: { barberId, date: start } } }),
     ]);
-    return { hasServicesToday: servicesToday > 0, claimed: !!claim };
+    return { hasGuarantee: barber?.hasGuarantee !== false, hasServicesToday: servicesToday > 0, claimed: !!claim };
   }
 
   /** Registra o corrige la base de caja del día (por defecto $50.000). */
@@ -485,6 +486,24 @@ export class ServicesService {
     const result = this.consolidateBarberTotals(withAdvances, true);
     const { total: totalExpenses } = await this.expensesService.getMonthlyExpensesTotal();
     return { barbers: result, businessSummary: this.buildBusinessSummary(result, totalExpenses) };
+  }
+
+  // Los gastos fijos se registran con cadencia mensual, así que no tiene
+  // sentido prorratearlos contra un rango arbitrario; el frontend ya oculta
+  // esa sección salvo cuando el período es "Mes".
+  async getRangeEarnings(startDate: string, endDate: string, barberId?: string) {
+    const { start, end } = bogotaDateRangeUtc(startDate, endDate);
+
+    const services = await this.prisma.service.findMany({
+      where: { ...(barberId && { barberId }), createdAt: { gte: start, lt: end } },
+      include: this.includeProducts()
+    });
+
+    const dailyResults = this.groupAndCalculateByDay(services, true);
+    const withGuarantees = await this.withGuaranteeDays(dailyResults, start, end, barberId);
+    const withAdvances = await this.withCashAdvances(withGuarantees, start, end, barberId);
+    const result = this.consolidateBarberTotals(withAdvances, true);
+    return { barbers: result, businessSummary: this.buildBusinessSummary(result) };
   }
 
   async getEarningsByBarber(period: string, barberId: string, date?: string, startDate?: string, endDate?: string) {

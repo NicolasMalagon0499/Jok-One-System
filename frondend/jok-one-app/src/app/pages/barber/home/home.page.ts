@@ -76,7 +76,7 @@ export class HomePage implements OnInit, ViewWillEnter {
   // false = registrar corte (+ productos opcionales), true = solo venta/uso de producto sin corte
   productOnlyMode = false;
 
-  guaranteeStatus = { hasServicesToday: false, claimed: false };
+  guaranteeStatus = { hasGuarantee: true, hasServicesToday: false, claimed: false };
 
   cashClose: any = {
     hasBase: false, base: 0, totalCash: 0, totalAdvances: 0,
@@ -332,7 +332,7 @@ get displayedTotal() {
   }
 
   loadGuaranteeStatus() {
-    this.http.get<{ hasServicesToday: boolean; claimed: boolean }>(
+    this.http.get<{ hasGuarantee: boolean; hasServicesToday: boolean; claimed: boolean }>(
       `${API}/services/guarantee-status/${this.user.id}`, { headers: this.getHeaders() }
     ).subscribe({
       next: (res) => this.guaranteeStatus = res,

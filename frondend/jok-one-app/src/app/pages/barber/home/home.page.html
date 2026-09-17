@@ -130,7 +130,7 @@
   </ion-card>
 
   <!-- GARANTÍA DE UN DÍA SIN CLIENTES -->
-  <ion-card *ngIf="period === 'daily' && !guaranteeStatus.hasServicesToday" color="tertiary">
+  <ion-card *ngIf="period === 'daily' && guaranteeStatus.hasGuarantee && !guaranteeStatus.hasServicesToday" color="tertiary">
     <ion-card-content *ngIf="!guaranteeStatus.claimed">
       <p>¿Hoy estuviste en el local pero no te llegó ningún cliente? Solicita tu garantía del día.</p>
       <ion-button expand="block" fill="outline" color="light" (click)="claimGuarantee()">
